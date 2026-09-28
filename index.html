@@ -56,7 +56,7 @@ button,input,textarea{font:inherit; color:inherit}
 .sub{color:var(--ink-2); max-width:62ch}
 
 /* tabs */
-.tabs{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px}
+.tabs{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px}
 .tab{
   display:grid; gap:0; text-align:left; cursor:pointer;
   background:var(--surface); border:1px solid var(--line); border-radius:10px;
@@ -217,6 +217,67 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
 .tile.bad .v{color:var(--bad)}
 .summary{background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:12px 14px; white-space:pre-wrap; word-break:break-word; font-size:14px; line-height:1.8; margin:0; font-family:var(--f-body)}
 
+/* digital host */
+.dh-wrap{display:grid; justify-items:center; min-width:0}
+.dh-side{display:grid; gap:16px; min-width:0}
+.dh-stage{
+  position:relative; width:100%; max-width:380px; aspect-ratio:9/16; border-radius:18px; overflow:hidden; isolation:isolate;
+  background:
+    linear-gradient(rgba(255,255,255,.45) 1px, transparent 1px) 0 0/30px 30px,
+    linear-gradient(90deg, rgba(255,255,255,.45) 1px, transparent 1px) 0 0/30px 30px,
+    linear-gradient(180deg,#C9DFDB 0%,#E4EEE8 72%);
+  font-family:var(--f-body);
+}
+.dh-avatar{position:absolute; left:50%; bottom:13%; width:106%; transform:translateX(-50%); z-index:1; overflow:visible}
+.dh-shelf{position:absolute; right:6%; top:15%; width:36%; aspect-ratio:140/50; z-index:0}
+.dh-counter{position:absolute; left:0; right:0; bottom:0; height:17%; z-index:2; background:linear-gradient(#EDE6DA,#D6CCBC); border-top:6px solid #C8BCA8}
+.dh-mw{position:absolute; left:4%; bottom:13.5%; width:30%; aspect-ratio:120/78; z-index:3}
+.dh-badge,.dh-sec{
+  position:absolute; top:12px; z-index:4; display:flex; align-items:center; gap:6px;
+  font-size:12px; font-weight:500; padding:4px 10px; border-radius:999px;
+}
+.dh-badge{left:12px; background:rgba(18,20,26,.66); color:#FFFFFF}
+.dh-dot{width:7px; height:7px; border-radius:50%; background:#F6B500}
+.dh-sec{right:12px; background:#F6B500; color:#1C1500}
+.dh-cap{
+  position:absolute; left:6%; right:6%; bottom:27%; z-index:4;
+  background:rgba(18,20,26,.74); color:#FFFFFF; border-radius:10px;
+  padding:8px 12px; font-size:15px; line-height:1.55; text-align:center; text-wrap:pretty;
+}
+.dh-card{
+  position:absolute; left:4%; right:4%; bottom:2.5%; z-index:4;
+  display:grid; grid-template-columns:46px minmax(0,1fr); gap:10px; align-items:center;
+  background:#FFFFFF; color:#131A23; border-radius:10px; padding:8px 10px;
+  box-shadow:0 4px 14px rgba(0,0,0,.14);
+}
+.dh-thumb{width:46px; aspect-ratio:120/78}
+.dh-pinfo{display:grid; gap:2px; min-width:0}
+.dh-pname{font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.dh-prow{display:flex; align-items:center; gap:8px}
+.dh-price{font-family:var(--f-num); font-weight:700; font-size:16px; background:#F6B500; color:#1C1500; padding:0 8px; border-radius:4px}
+.dh-link{font-size:12px; color:#6F7B8B}
+.secs{display:flex; flex-wrap:wrap; gap:6px}
+.secs button{
+  font-size:12.5px; padding:3px 10px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--line); background:var(--surface); color:var(--ink-2);
+}
+.secs button:hover{border-color:var(--ink-3)}
+.secs button.on{background:var(--tag); border-color:var(--tag); color:var(--tag-ink)}
+.field select{width:100%; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:8px 11px; min-width:0}
+.field input[type="range"]{width:100%; accent-color:var(--btn)}
+.qform{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px}
+.qform input{width:100%; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:8px 11px; min-width:0}
+.qform input:focus{outline:2px solid var(--tag); outline-offset:0; border-color:var(--tag)}
+.qchips{display:flex; flex-wrap:wrap; gap:6px}
+.qchips button{font-size:13px; padding:3px 11px; border-radius:999px; cursor:pointer; border:1px solid var(--line); background:var(--bg); color:var(--ink)}
+.qchips button:hover{border-color:var(--ink-3)}
+.dh-log{list-style:none; margin:0; padding:0; display:grid; gap:6px; font-size:13.5px}
+.dh-log li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:8px; align-items:start}
+.dh-log .who{font-size:11.5px; padding:1px 7px; border-radius:6px; background:var(--sunk); color:var(--ink-2); white-space:nowrap}
+.dh-log .who.a{background:var(--tag-soft); color:var(--ink)}
+.dh-log .who.skip{background:var(--bad-bg); color:var(--bad)}
+ul.plain{margin:0; padding-left:1.2em; display:grid; gap:6px; color:var(--ink-2); max-width:72ch}
+
 /* footer, toast */
 .foot{border-top:1px solid var(--line); padding-top:16px; display:flex; flex-wrap:wrap; gap:10px 16px; justify-content:space-between; align-items:center; color:var(--ink-3); font-size:13px}
 .foot p{max-width:70ch}
@@ -231,7 +292,7 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
   .cols,.cols.flip{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:560px){
-  .tabs{gap:4px}
+  .tabs{gap:4px; grid-template-columns:repeat(3,minmax(0,1fr))}
   .tab{padding:7px 4px 8px; text-align:center}
   .tab .tl{font-size:13px}
   .tab .ph{font-size:10px; letter-spacing:.06em}
@@ -250,7 +311,7 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
 <div class="wrap">
   <header class="top">
     <div class="brand"><span class="dot" aria-hidden="true"></span><h1>家电直播工具箱</h1></div>
-    <p class="sub">给微波炉、烤箱这类厨电直播用：开播前算到手价、写讲款话术、查违禁词，开播时按排品表倒计时、提醒预热备菜，下播后算数据写复盘。打开就能用，不用登录。</p>
+    <p class="sub">给微波炉、烤箱这类厨电直播用：开播前算到手价、写讲款话术、查违禁词，开播时按排品表倒计时、提醒预热备菜，还可以让数字人主播念话术、答弹幕，下播后算数据写复盘。打开就能用，不用登录。</p>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="工具">
@@ -258,6 +319,7 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
     <button class="tab" role="tab" type="button" id="tab-script" aria-controls="script" data-tab="script"><span class="ph">播前</span><span class="tl">写话术</span></button>
     <button class="tab" role="tab" type="button" id="tab-words" aria-controls="words" data-tab="words"><span class="ph">播前</span><span class="tl">查违禁词</span></button>
     <button class="tab" role="tab" type="button" id="tab-timer" aria-controls="timer" data-tab="timer"><span class="ph">播中</span><span class="tl">场控计时</span></button>
+    <button class="tab" role="tab" type="button" id="tab-dh" aria-controls="dh" data-tab="dh"><span class="ph">播中</span><span class="tl">数字人</span></button>
     <button class="tab" role="tab" type="button" id="tab-review" aria-controls="review" data-tab="review"><span class="ph">播后</span><span class="tl">下播复盘</span></button>
   </nav>
   <p class="note">里面先填了示例数字，改成自己的就行。填的内容只保存在这台设备的浏览器里。</p>
@@ -409,6 +471,141 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
     </div>
   </section>
 
+  <!-- 数字人主播 -->
+  <section class="panel" id="dh" role="tabpanel" aria-labelledby="tab-dh" hidden>
+    <div class="phead">
+      <h2>数字人主播</h2>
+      <p>一个会念话术、会回答弹幕提问的虚拟主播。话术来自「写话术」，价格来自「算到手价」；有禁用词的句子不会念出来。</p>
+    </div>
+    <div class="cols">
+      <div class="dh-wrap">
+        <div class="dh-stage" id="dhStage">
+          <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+            <symbol id="mwSym" viewBox="0 0 120 78">
+              <rect x="10" y="70" width="12" height="6" rx="2" fill="#2A2E35"/>
+              <rect x="98" y="70" width="12" height="6" rx="2" fill="#2A2E35"/>
+              <rect x="2" y="2" width="116" height="70" rx="9" fill="#3A3F47"/>
+              <rect x="10" y="10" width="72" height="54" rx="5" fill="#1C2026"/>
+              <path d="M16 16 L44 16 L22 58 L16 58 Z" fill="#FFFFFF" opacity=".10"/>
+              <rect x="88" y="10" width="24" height="54" rx="4" fill="#2C3037"/>
+              <rect x="92" y="15" width="16" height="8" rx="2" fill="#F6B500"/>
+              <circle cx="100" cy="36" r="6" fill="#59606B"/>
+              <circle cx="100" cy="53" r="4" fill="#59606B"/>
+            </symbol>
+          </svg>
+          <div class="dh-badge"><span class="dh-dot" aria-hidden="true"></span><span id="dhBadge">AI 数字人</span></div>
+          <div class="dh-sec" id="dhSec" hidden></div>
+          <svg class="dh-shelf" viewBox="0 0 140 50" aria-hidden="true">
+            <rect x="0" y="42" width="140" height="6" rx="2" fill="#B98E62"/>
+            <rect x="10" y="17" width="22" height="25" rx="4" fill="#FFFFFF" opacity=".85"/>
+            <rect x="9" y="13" width="24" height="6" rx="2" fill="#F6B500"/>
+            <rect x="40" y="24" width="18" height="18" rx="4" fill="#FFFFFF" opacity=".85"/>
+            <rect x="39" y="20" width="20" height="5" rx="2" fill="#2F3B52"/>
+            <ellipse cx="104" cy="22" rx="7" ry="13" fill="#6BA368" transform="rotate(-24 104 22)"/>
+            <ellipse cx="116" cy="22" rx="7" ry="13" fill="#5E9960" transform="rotate(22 116 22)"/>
+            <rect x="99" y="28" width="22" height="14" rx="3" fill="#D9825B"/>
+          </svg>
+          <svg class="dh-avatar" viewBox="0 0 300 380" role="img" aria-label="卡通数字人主播">
+            <g id="dhBody">
+              <path d="M52 380 C52 300 88 268 150 268 C212 268 248 300 248 380 Z" fill="#2F3B52"/>
+              <path d="M64 300 C50 330 48 360 52 380" stroke="#2F3B52" stroke-width="30" stroke-linecap="round" fill="none"/>
+              <path d="M104 300 L196 300 L208 380 L92 380 Z" fill="#F6B500"/>
+              <path d="M106 302 C112 286 122 276 132 270" stroke="#F6B500" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <path d="M194 302 C188 286 178 276 168 270" stroke="#F6B500" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <rect x="128" y="330" width="44" height="24" rx="5" fill="#DDA200"/>
+              <g id="dhArm">
+                <path d="M236 300 C252 318 258 334 250 350" stroke="#2F3B52" stroke-width="28" stroke-linecap="round" fill="none"/>
+                <circle cx="247" cy="357" r="13" fill="#F1C7A5"/>
+              </g>
+            </g>
+            <g id="dhHead">
+              <path d="M80 160 C80 90 115 70 150 70 C185 70 220 90 220 160 L222 226 C200 238 100 238 78 226 Z" fill="#3A2A2E"/>
+              <rect x="136" y="218" width="28" height="56" rx="12" fill="#E7B48E"/>
+              <ellipse cx="87" cy="172" rx="9" ry="12" fill="#F1C7A5"/>
+              <ellipse cx="213" cy="172" rx="9" ry="12" fill="#F1C7A5"/>
+              <ellipse cx="150" cy="165" rx="62" ry="68" fill="#F1C7A5"/>
+              <path d="M88 152 C90 104 118 84 152 84 C186 84 210 104 212 150 C198 132 180 120 160 116 C150 134 124 146 88 152 Z" fill="#3A2A2E"/>
+              <g id="dhBrows">
+                <path d="M114 146 Q126 140 138 145" stroke="#3A2A2E" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                <path d="M162 145 Q174 140 186 146" stroke="#3A2A2E" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+              </g>
+              <g id="dhEyeL"><ellipse cx="127" cy="167" rx="6.5" ry="8.5" fill="#241A20"/><circle cx="129.5" cy="163.5" r="2.2" fill="#FFFFFF"/></g>
+              <g id="dhEyeR"><ellipse cx="173" cy="167" rx="6.5" ry="8.5" fill="#241A20"/><circle cx="175.5" cy="163.5" r="2.2" fill="#FFFFFF"/></g>
+              <ellipse cx="113" cy="188" rx="11" ry="6" fill="#F08F8F" opacity=".4"/>
+              <ellipse cx="187" cy="188" rx="11" ry="6" fill="#F08F8F" opacity=".4"/>
+              <path d="M149 177 Q146 185 151 187" stroke="#D59A78" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+              <path id="dhSmile" d="M139 202 Q150 211 161 202" stroke="#8A3B45" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <g id="dhMouth" opacity="0">
+                <ellipse id="dhMouthO" cx="150" cy="205" rx="10" ry="4" fill="#7A2E3A"/>
+                <ellipse id="dhTongue" cx="150" cy="207" rx="6" ry="1.5" fill="#E07A86"/>
+              </g>
+              <path d="M212 178 C214 202 200 214 180 214" stroke="#2A2A30" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <circle cx="178" cy="214" r="4.5" fill="#2A2A30"/>
+            </g>
+          </svg>
+          <div class="dh-counter" aria-hidden="true"></div>
+          <svg class="dh-mw" aria-hidden="true"><use href="#mwSym"/></svg>
+          <div class="dh-cap" id="dhCap" aria-live="polite" hidden></div>
+          <div class="dh-card">
+            <svg class="dh-thumb" aria-hidden="true"><use href="#mwSym"/></svg>
+            <div class="dh-pinfo">
+              <div class="dh-pname" id="dhPName"></div>
+              <div class="dh-prow"><span class="dh-price" id="dhPrice"></span><span class="dh-link" id="dhLink"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dh-side">
+        <div class="card">
+          <div class="row between"><h3>播讲</h3><span class="hint" id="dhMode"></span></div>
+          <div class="row">
+            <button class="btn big" type="button" id="dhGo">开始播讲</button>
+            <button class="btn ghost" type="button" id="dhNext">下一段</button>
+          </div>
+          <div class="secs" id="dhSecs"></div>
+          <div class="fields">
+            <div class="field"><label for="dh-name">主播名字</label><input type="text" id="dh-name" data-bind="dh.name"></div>
+            <div class="field"><label for="dh-voice">声音</label><select id="dh-voice"></select></div>
+            <div class="field"><label for="dh-rate">语速 <span class="num" id="dhRateV"></span></label><input type="range" id="dh-rate" min="0.7" max="1.5" step="0.05" data-bind="dh.rate"></div>
+            <div class="field"><label for="dh-pitch">音调 <span class="num" id="dhPitchV"></span></label><input type="range" id="dh-pitch" min="0.7" max="1.5" step="0.05" data-bind="dh.pitch"></div>
+            <label class="check" for="dh-loop" style="grid-column:auto"><input type="checkbox" id="dh-loop" data-bind="dh.loop">讲完从头循环</label>
+            <label class="check" for="dh-mute" style="grid-column:auto"><input type="checkbox" id="dh-mute" data-bind="dh.mute">只出字幕，不出声</label>
+          </div>
+          <p class="hint">点下面的段落名可以直接跳过去。改了话术或价格，数字人下一句就会用新的。</p>
+        </div>
+        <div class="card">
+          <h3>弹幕互动</h3>
+          <form class="qform" id="dhQForm">
+            <input type="text" id="dh-q" placeholder="把观众的问题打在这里，比如：有国补吗" aria-label="观众的问题">
+            <button class="btn" type="submit">让她回答</button>
+          </form>
+          <div class="qchips" id="dhQuick">
+            <button type="button" data-q="多少钱？">多少钱？</button>
+            <button type="button" data-q="有国补吗？">有国补吗？</button>
+            <button type="button" data-q="怎么买？">怎么买？</button>
+            <button type="button" data-q="售后怎么样？">售后怎么样？</button>
+            <button type="button" data-q="送什么？">送什么？</button>
+            <button type="button" data-q="容量多大？">容量多大？</button>
+          </div>
+          <div class="field">
+            <label for="dh-faq">常见问题（一行一条：关键词=回答，多个关键词用 / 隔开）</label>
+            <textarea id="dh-faq" rows="4" data-bind="dh.faq"></textarea>
+          </div>
+          <p class="hint">价格、国补、链接、售后、赠品、库存这些不用填，会自动用前面工具里的内容回答。</p>
+          <ul class="dh-log" id="dhLog"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>想放进真的直播间</h3>
+      <ul class="plain">
+        <li>用 OBS 或直播伴侣的「窗口采集」抓左边的画面，声音选「系统声音」。</li>
+        <li>各平台对数字人直播都有专门规定，一般要求画面上明显标注「AI 生成 / 数字人」、有真人在后台实时盯播和回复、不能全程循环录播。正式开播前按平台最新规则报备。</li>
+        <li>这是演示版：形象是画出来的卡通人物，声音用的是浏览器自带的语音。要商用，可以接专业数字人服务，形象和口型会自然得多。</li>
+      </ul>
+    </div>
+  </section>
+
   <!-- 下播复盘 -->
   <section class="panel" id="review" role="tabpanel" aria-labelledby="tab-review" hidden>
     <div class="phead">
@@ -477,6 +674,10 @@ var DEFAULTS = {
       { name:'整点福利秒杀', min:'5', note:'上架前和运营核对库存', prep:'' },
       { name:'返场 + 下场预告', min:'4', note:'', prep:'' }
     ]
+  },
+  dh: {
+    name:'小灶', rate:'1.05', pitch:'1.1', voice:'', loop:true, mute:false,
+    faq:'容量/多大/几升=这款是 23 升，一盘能烤 8 个鸡翅，一家三口够用。\n尺寸/放得下/多宽=下单前量一下台面，左右和上面都要留出散热空间，详细尺寸可以问客服。\n清洗/好洗/清理=内胆用湿布一擦就干净，蒸完开门散散水汽就行。'
   },
   review: {
     mins:'240', stay:'52', uv:'26000', pv:'36000', buyers:'540', orders:'566',
@@ -557,7 +758,7 @@ function copy(text){
 }
 
 /* ---------- tabs ---------- */
-var TABS = ['price', 'script', 'words', 'timer', 'review'];
+var TABS = ['price', 'script', 'words', 'timer', 'dh', 'review'];
 function activate(name, focus){
   if (TABS.indexOf(name) < 0) name = 'price';
   state.tab = name; save();
@@ -822,6 +1023,7 @@ function scriptData(){
   };
 }
 var scriptText = '';
+var scriptSecs = [];
 function renderScript(focusIdx){
   var s = state.script, d = scriptData();
   var out = $('#sOut'); out.textContent = '';
@@ -845,6 +1047,8 @@ function renderScript(focusIdx){
     out.appendChild(art);
   });
   scriptText = parts.join('\n\n');
+  scriptSecs = T.map(function(sec, i){ return { k:sec.k, text:plainTexts[i] }; });
+  renderDH();
   if (typeof focusIdx === 'number') out.children[focusIdx].querySelector('button').focus();
 
   var hits = scan(plainTexts.join('\n'));
@@ -1106,6 +1310,260 @@ document.addEventListener('keydown', function(e){
   else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
 });
 
+/* ---------- digital host ---------- */
+var synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
+var zhVoices = [];
+var dh = { playing:false, sec:0, sent:0, token:0, speaking:false, since:0, mode:'', timer:null, gap:null, done:null,
+           kick:0, answering:false, skips:0, skipped:{}, open:0, arm:0, nextBlink:0, log:[] };
+
+function loadVoices(){
+  var all = [];
+  try { all = synth ? synth.getVoices() || [] : []; } catch (e) {}
+  zhVoices = all.filter(function(v){ return /^(zh|cmn)/i.test(v.lang || ''); });
+  zhVoices.sort(function(a, b){ return (/CN/i.test(b.lang) ? 1 : 0) - (/CN/i.test(a.lang) ? 1 : 0); });
+  var sel = $('#dh-voice'); sel.textContent = '';
+  if (!zhVoices.length) {
+    var o = el('option'); o.value = ''; o.textContent = '这个浏览器没有中文语音'; sel.appendChild(o);
+    sel.disabled = true;
+  } else {
+    sel.disabled = false;
+    zhVoices.forEach(function(v){ var o = el('option'); o.value = v.name; o.textContent = v.name; sel.appendChild(o); });
+    if (zhVoices.some(function(v){ return v.name === state.dh.voice; })) sel.value = state.dh.voice;
+  }
+  renderDH();
+}
+$('#dh-voice').addEventListener('change', function(){ state.dh.voice = this.value; save(); });
+function canSpeak(){ return !!synth && zhVoices.length > 0 && !state.dh.mute; }
+
+function setCaption(t){ var c = $('#dhCap'); c.textContent = t; c.hidden = !t; }
+function estimate(text, rate){ return Math.max(1200, text.length / (4.2 * rate) * 1000); }
+function hush(){
+  dh.token++; dh.speaking = false; dh.done = null;
+  clearTimeout(dh.timer); clearTimeout(dh.gap);
+  if (synth) { try { synth.cancel(); } catch (e) {} }
+}
+function speak(text, cb){
+  var tok = ++dh.token, finished = false;
+  clearTimeout(dh.timer);
+  setCaption(text);
+  dh.speaking = true; dh.since = performance.now();
+  dh.done = function(){
+    if (finished || tok !== dh.token) return;
+    finished = true; dh.speaking = false; dh.done = null;
+    if (cb) cb();
+  };
+  var rate = num(state.dh.rate) || 1;
+  if (canSpeak()) {
+    dh.mode = 'voice';
+    try {
+      var u = new SpeechSynthesisUtterance(text);
+      var v = zhVoices.filter(function(x){ return x.name === state.dh.voice; })[0] || zhVoices[0];
+      u.voice = v; u.lang = v.lang; u.rate = rate; u.pitch = num(state.dh.pitch) || 1;
+      u.onend = dh.done; u.onerror = dh.done;
+      u.onboundary = function(){ dh.kick = performance.now(); };
+      synth.speak(u);
+      return;
+    } catch (e) {}
+  }
+  dh.mode = 'text';
+  dh.timer = setTimeout(dh.done, estimate(text, rate));
+}
+
+function sentencesOf(text){
+  return (text.match(/[^。！？!?；]+[。！？!?；]?/g) || [])
+    .map(function(s){ return s.trim(); })
+    .filter(function(s){ return s && s.charAt(0) !== '（'; });
+}
+function badWords(text){
+  var out = [];
+  scan(text).forEach(function(h){ if (h.it.s === 'bad' && out.indexOf(h.it.w) < 0) out.push(h.it.w); });
+  return out;
+}
+function addLog(who, text){
+  dh.log.push({ who:who, text:text });
+  if (dh.log.length > 12) dh.log.shift();
+  var ul = $('#dhLog'); ul.textContent = '';
+  var label = { q:'观众', a:'回答', skip:'没念', info:'提示' };
+  dh.log.forEach(function(x){
+    var li = el('li');
+    var w = el('span', 'who ' + x.who); w.textContent = label[x.who];
+    var t = el('span'); t.textContent = x.text;
+    li.appendChild(w); li.appendChild(t); ul.appendChild(li);
+  });
+}
+function stopPlay(msg){
+  dh.playing = false; dh.answering = false; hush(); setCaption('');
+  if (msg) addLog('info', msg);
+  renderDH();
+}
+function playNext(){
+  if (!dh.playing) return;
+  if (!scriptSecs.length) { stopPlay('话术是空的，先去「写话术」填内容'); return; }
+  if (dh.sec >= scriptSecs.length) {
+    if (state.dh.loop) { dh.sec = 0; dh.sent = 0; }
+    else { dh.sec = 0; dh.sent = 0; stopPlay('这一轮话术讲完了'); return; }
+  }
+  var sents = sentencesOf(scriptSecs[dh.sec].text);
+  if (dh.sent >= sents.length) {
+    dh.sec++; dh.sent = 0;
+    if (++dh.skips > 60) { stopPlay('没有能念的句子，先去「写话术」看看'); return; }
+    playNext(); return;
+  }
+  var s = sents[dh.sent], bad = badWords(s);
+  if (bad.length) {
+    if (!dh.skipped[s]) { dh.skipped[s] = true; addLog('skip', '有禁用词「' + bad.join('、') + '」，跳过：' + s); }
+    dh.sent++;
+    if (++dh.skips > 60) { stopPlay('没有能念的句子，先去「写话术」看看'); return; }
+    playNext(); return;
+  }
+  dh.skips = 0;
+  renderDH();
+  speak(s, function(){ dh.sent++; dh.gap = setTimeout(playNext, 260); });
+}
+function startPlay(){
+  if (dh.playing) return;
+  dh.playing = true; dh.skips = 0;
+  clearTimeout(dh.gap);
+  if (!dh.answering) playNext(); else renderDH();
+}
+function jumpSection(i){
+  hush(); dh.answering = false;
+  dh.sec = i; dh.sent = 0;
+  if (dh.playing) playNext(); else { setCaption(''); renderDH(); }
+}
+$('#dhGo').addEventListener('click', function(){ if (dh.playing) stopPlay(); else startPlay(); });
+$('#dhNext').addEventListener('click', function(){ jumpSection((dh.sec + 1) % Math.max(scriptSecs.length, 1)); });
+
+function parseFaq(){
+  return (state.dh.faq || '').split('\n').map(function(line){
+    var i = line.search(/[=＝]/);
+    if (i < 1) return null;
+    var keys = line.slice(0, i).split(/[\/／|、,，]/).map(function(k){ return k.trim(); }).filter(Boolean);
+    var ans = line.slice(i + 1).trim();
+    return keys.length && ans ? { keys:keys, ans:ans } : null;
+  }).filter(Boolean);
+}
+function buildAnswer(q){
+  var faq = parseFaq();
+  for (var i = 0; i < faq.length; i++) {
+    if (faq[i].keys.some(function(k){ return q.indexOf(k) >= 0; })) return faq[i].ans;
+  }
+  var p = state.price, r = calcPrice(p), d = scriptData();
+  var rules = [
+    [/国补|补贴|以旧换新/, function(){
+      return p.sub && r.sub > 0
+        ? '今天可以叠加国补，这款按 ' + plain(r.rate) + '% 补，能省 ' + plain(r.sub) + ' 元，到手 ' + plain(r.fin) + ' 元，具体以下单页面显示为准。'
+        : '这款今天没有叠加国补，直播间到手价是 ' + plain(r.fin) + ' 元。'; }],
+    [/多少钱|价格|价钱|几块|多少|便宜|优惠|到手|划算/, function(){
+      var st = priceSteps(r);
+      return (st.length ? '日常价 ' + plain(r.p0) + ' 元，今天直播间' + st.join('，') + '，到手 ' + plain(r.fin) + ' 元。'
+                        : '今天直播间到手 ' + plain(r.fin) + ' 元。') + giftSentence(p); }],
+    [/链接|怎么买|在哪|哪里买|下单|怎么拍|购买|小黄车/, function(){ return '点' + d.link + '就能拍。'; }],
+    [/售后|保修|质保|退货|退换|安装|坏了|维修/, function(){ return d.after + '。'; }],
+    [/送货|发货|物流|快递|几天到/, function(){ return '下单后按店铺的发货时间发出，物流进度在订单里能查到，也可以问店铺客服。'; }],
+    [/送|赠品|礼物/, function(){ var g = (p.gift || '').trim(); return g ? '今天下单' + g + '。' : '这款今天没有额外赠品。'; }],
+    [/库存|还有吗|没抢到|抢不到|补货|没了/, function(){ return (d.limit ? d.limit + '，' : '') + '没抢到的公屏扣「还要」，我让运营看看能不能再加一点。'; }],
+    [/功能|好用|区别|卖点|有什么用|能做|怎么样/, function(){ return d.pts.length ? '给大家说' + d.cnt + '点：' + d.pts.join('；') + '。' : '稍后我给大家详细讲讲。'; }]
+  ];
+  for (var j = 0; j < rules.length; j++) if (rules[j][0].test(q)) return rules[j][1]();
+  return '这个问题我记下了，稍后让客服详细回复你，也可以直接找店铺客服问。';
+}
+function answer(q){
+  q = (q || '').trim();
+  if (!q) return;
+  var a = buildAnswer(q);
+  addLog('q', q);
+  var bad = badWords(a);
+  if (bad.length) { addLog('skip', '回答里有禁用词「' + bad.join('、') + '」，没有念。改一下常见问题里的回答。'); return; }
+  addLog('a', a);
+  var lead = badWords(q).length ? '看到有家人提问。' : '看到有家人问：' + q.replace(/[？?。！!]+$/, '') + '？';
+  hush();
+  dh.answering = true; renderDH();
+  speak(lead + a, function(){
+    dh.answering = false; renderDH();
+    if (dh.playing) dh.gap = setTimeout(playNext, 400); else dh.gap = setTimeout(function(){ setCaption(''); }, 1500);
+  });
+}
+$('#dhQForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var inp = $('#dh-q'); answer(inp.value); inp.value = '';
+});
+$$('#dhQuick button').forEach(function(b){ b.addEventListener('click', function(){ answer(b.dataset.q); }); });
+
+function renderDH(){
+  var name = (state.dh.name || '').trim() || '主播';
+  $('#dhBadge').textContent = 'AI 数字人 · ' + name;
+  var r = calcPrice(state.price), s = state.script;
+  $('#dhPName').textContent = (s.name || '').trim() || '产品';
+  $('#dhPrice').textContent = '¥' + plain(r.fin);
+  $('#dhLink').textContent = (s.link || '').trim() ? (s.link.trim() + ' 号链接') : '小黄车';
+  var sec = $('#dhSec');
+  var cur = scriptSecs[dh.sec];
+  sec.hidden = !(dh.playing || dh.answering);
+  sec.textContent = dh.answering ? '回答弹幕' : cur ? cur.k : '';
+  var box = $('#dhSecs'); box.textContent = '';
+  scriptSecs.forEach(function(x, i){
+    var b = el('button', i === dh.sec ? 'on' : ''); b.type = 'button'; b.textContent = x.k;
+    b.addEventListener('click', function(){ jumpSection(i); });
+    box.appendChild(b);
+  });
+  $('#dhGo').textContent = dh.playing ? '停下' : '开始播讲';
+  $('#dhRateV').textContent = (num(state.dh.rate) || 1).toFixed(2);
+  $('#dhPitchV').textContent = (num(state.dh.pitch) || 1).toFixed(2);
+  $('#dhMode').textContent = canSpeak() ? '有声音' : !synth || !zhVoices.length ? '这个浏览器不能发声，只出字幕' : '只出字幕';
+}
+
+var AV = {
+  head:$('#dhHead'), body:$('#dhBody'), arm:$('#dhArm'), brows:$('#dhBrows'),
+  eyeL:$('#dhEyeL'), eyeR:$('#dhEyeR'), smile:$('#dhSmile'), mouth:$('#dhMouth'), mo:$('#dhMouthO'), tg:$('#dhTongue')
+};
+var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function frame(now){
+  requestAnimationFrame(frame);
+  if (state.tab !== 'dh') return;
+  var t = now / 1000;
+  if (dh.speaking && dh.mode === 'voice' && synth && now - dh.since > 900 && !synth.speaking && !synth.pending && dh.done) dh.done();
+
+  var target = 0;
+  if (dh.speaking) {
+    target = 0.3 + 0.7 * Math.abs(Math.sin(t * 13 + Math.sin(t * 4.3) * 2));
+    if (now - dh.kick < 110) target = 1;
+  }
+  dh.open += (target - dh.open) * 0.4;
+  if (dh.open > 0.06) {
+    var ry = 1.5 + dh.open * 8;
+    AV.smile.setAttribute('opacity', '0'); AV.mouth.setAttribute('opacity', '1');
+    AV.mo.setAttribute('ry', ry.toFixed(2)); AV.mo.setAttribute('rx', (10 - dh.open * 1.5).toFixed(2));
+    AV.tg.setAttribute('cy', (205 + ry * 0.45).toFixed(2)); AV.tg.setAttribute('ry', Math.max(0.6, ry * 0.32).toFixed(2));
+  } else {
+    AV.smile.setAttribute('opacity', '1'); AV.mouth.setAttribute('opacity', '0');
+  }
+
+  if (!dh.nextBlink) dh.nextBlink = now + 1800;
+  var sy = 1;
+  if (now >= dh.nextBlink) {
+    var k = (now - dh.nextBlink) / 160;
+    if (k >= 1) dh.nextBlink = now + 2200 + Math.random() * 3200;
+    else sy = Math.max(0.1, Math.abs(1 - 2 * k));
+  }
+  AV.eyeL.setAttribute('transform', 'translate(127 167) scale(1 ' + sy.toFixed(2) + ') translate(-127 -167)');
+  AV.eyeR.setAttribute('transform', 'translate(173 167) scale(1 ' + sy.toFixed(2) + ') translate(-173 -167)');
+  AV.brows.setAttribute('transform', dh.answering ? 'translate(0 -2.5)' : '');
+
+  if (reduceMotion) return;
+  var sway = Math.sin(t * 0.9) * 1.4 + (dh.speaking ? Math.sin(t * 2.7) * 1.6 : 0);
+  var bob = Math.sin(t * 1.7) * 1.2;
+  AV.head.setAttribute('transform', 'rotate(' + sway.toFixed(2) + ' 150 255) translate(0 ' + bob.toFixed(2) + ')');
+  AV.body.setAttribute('transform', 'translate(0 ' + (bob * 0.5).toFixed(2) + ')');
+  var armTarget = dh.speaking ? -10 + Math.sin(t * 2.3) * 7 : 0;
+  dh.arm += (armTarget - dh.arm) * 0.08;
+  AV.arm.setAttribute('transform', 'rotate(' + dh.arm.toFixed(2) + ' 236 300)');
+}
+requestAnimationFrame(frame);
+if (synth) {
+  try { synth.addEventListener('voiceschanged', loadVoices); } catch (e) { synth.onvoiceschanged = loadVoices; }
+}
+
 /* ---------- review ---------- */
 function durationText(m){
   m = Math.round(m);
@@ -1169,6 +1627,7 @@ var RENDER = {
   script:function(){ renderScript(); },
   words:function(){ renderWords(); },
   timer:function(){ renderStage(); },
+  dh:function(){ renderDH(); },
   review:function(){ renderReview(); }
 };
 function syncInputs(){
@@ -1199,6 +1658,7 @@ $('#resetAll').addEventListener('click', function(){
   var tab = state.tab;
   state = clone(DEFAULTS); state.tab = tab;
   releaseLock(); rt = freshRuntime(); $('#water').hidden = true; $('#prep').hidden = true;
+  stopPlay(); dh.sec = 0; dh.sent = 0;
   save(); syncInputs(); renderAll();
   toast('已恢复示例数据');
 });
@@ -1206,6 +1666,7 @@ $('#resetAll').addEventListener('click', function(){
 /* ---------- boot ---------- */
 syncInputs();
 renderAll();
+loadVoices();
 var hash = (location.hash || '').slice(1);
 activate(TABS.indexOf(hash) >= 0 ? hash : state.tab);
 })();
