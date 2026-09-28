@@ -189,7 +189,7 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
 .trows{display:grid; gap:8px}
 .trow{
   display:grid; grid-template-columns:34px minmax(0,1fr) 64px auto; gap:6px; align-items:center;
-  grid-template-areas:"n name min del" ". note note note";
+  grid-template-areas:"n name min del" ". note prep prep";
   padding:6px; border-radius:10px; border:1px solid transparent;
 }
 .trow .tnum{grid-area:n}
@@ -197,6 +197,7 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
 .trow .tmin{grid-area:min}
 .trow .tnote{grid-area:note; font-size:13px}
 .trow .tdel{grid-area:del}
+.trow .tprep{grid-area:prep; font-size:13px; text-align:center}
 .trow.cur{background:var(--tag-soft); border-color:var(--tag)}
 .trow.done .tnum{text-decoration:line-through; color:var(--ink-3)}
 .tnum{width:34px; height:34px; border-radius:8px; border:1px solid var(--line); background:var(--surface); cursor:pointer; font-family:var(--f-num); font-size:13px}
@@ -249,7 +250,7 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
 <div class="wrap">
   <header class="top">
     <div class="brand"><span class="dot" aria-hidden="true"></span><h1>家电直播工具箱</h1></div>
-    <p class="sub">开播前算到手价、写讲款话术、查违禁词，开播时按排品表倒计时，下播后算数据写复盘。打开就能用，不用登录。</p>
+    <p class="sub">给微波炉、烤箱这类厨电直播用：开播前算到手价、写讲款话术、查违禁词，开播时按排品表倒计时、提醒预热备菜，下播后算数据写复盘。打开就能用，不用登录。</p>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="工具">
@@ -279,7 +280,7 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
           <div class="field"><label for="p-cap">单件封顶（元）</label><input type="text" inputmode="decimal" class="num" id="p-cap" data-bind="price.cap"></div>
           <div class="field span2"><label for="p-gift">赠品</label><input type="text" id="p-gift" data-bind="price.gift" placeholder="比如：送基础安装和一年延保"></div>
         </div>
-        <p class="hint">没有满减就把满减金额填 0。国补按券后价计算；2025 年的标准是一级能效 20%、二级 15%，单件最多补 2000 元，各地规则不同，以当地最新政策为准。</p>
+        <p class="hint">没有满减就把满减金额填 0。国补按券后价计算。2025 年国补把微波炉列进了补贴范围：一级能效 20%、二级 15%，单件最多补 2000 元；烤箱、蒸烤箱要看当地政策。各地规则不同，以当地最新政策为准。</p>
       </div>
       <div class="card">
         <div class="tagwrap">
@@ -362,7 +363,7 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
   <section class="panel" id="timer" role="tabpanel" aria-labelledby="tab-timer" hidden>
     <div class="phead">
       <h2>场控计时</h2>
-      <p>按排品表给每个环节倒计时，最后一分钟变黄，超时变红，到点提醒喝水。开着这一页，屏幕不会自动熄灭（大部分手机支持）。</p>
+      <p>按排品表给每个环节倒计时，最后一分钟变黄，超时变红。要现场做菜的环节，会提前提醒预热、备菜，到点也会提醒喝水。开着这一页，屏幕不会自动熄灭（大部分手机支持）。</p>
     </div>
     <div class="cols flip">
       <div class="card stage" id="stage">
@@ -376,6 +377,10 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
         <div class="bar" aria-hidden="true"><i id="stBar"></i></div>
         <p id="stNote"></p>
         <p id="stNext"></p>
+        <div class="water" id="prep" hidden>
+          <span id="prepText"></span>
+          <button class="btn sm" type="button" id="prepOk">知道了</button>
+        </div>
         <div class="water" id="water" hidden>
           <span id="waterText">该喝口水了</span>
           <button class="btn sm" type="button" id="waterOk">喝了</button>
@@ -395,6 +400,7 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
           <button class="btn ghost sm" type="button" id="tAdd">加一个环节</button>
           <span class="hint">点序号可以直接跳过去</span>
         </div>
+        <p class="hint">「提前备」填几分钟，就会在这个环节开始前几分钟提醒你预热、备菜。</p>
         <div class="fields">
           <div class="field"><label for="t-water">每隔几分钟提醒喝水</label><input type="text" inputmode="numeric" class="num" id="t-water" data-bind="timer.water"></div>
           <label class="check" for="t-sound" style="grid-column:auto"><input type="checkbox" id="t-sound" data-bind="timer.sound">环节到点时响提示音</label>
@@ -449,34 +455,34 @@ mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 
 var KEY = 'jdzb-toolkit-v1';
 var DEFAULTS = {
   tab: 'price',
-  price: { p0:'3999', d1:'300', th:'3000', tv:'200', sub:true, rate:'20', cap:'2000', gift:'送基础安装和一年延保' },
+  price: { p0:'1599', d1:'200', th:'1000', tv:'50', sub:true, rate:'20', cap:'2000', gift:'送烤盘、蒸盘和一本食谱' },
   script: {
-    name:'新一级能效 1.5匹变频空调挂机', scene:'卧室、小书房', link:'3',
-    pain:'夏天开一晚上空调，电费心疼，早上起来还头疼',
-    s1:'新一级能效变频，同样开一晚更省电', s2:'防直吹风感，睡觉吹不到头', s3:'自清洁功能，换季不用自己拆洗',
-    limit:'这一轮只放 200 台', after:'7 天无理由退货，官方师傅上门安装',
+    name:'23L 微蒸烤一体机', scene:'小厨房、租房的上班族', link:'2',
+    pain:'厨房台面小，微波炉、蒸锅、烤箱摆不下，剩饭一热就干巴巴',
+    s1:'微波、蒸、烤、空气炸一台搞定，省出两台机器的位置', s2:'蒸汽加热剩饭，热完还是软的，不干硬', s3:'上下管独立控温，烤鸡翅外皮酥、里面嫩',
+    limit:'这一轮只放 300 台', after:'7 天无理由退货，整机保修一年',
     v:[0,0,0,0,0,0]
   },
   words: {
-    text:'家人们这款空调是全网最低价，销量第一，除菌率100%，买回去绝对不后悔！有问题加我微信私聊，保证给你最好的售后。',
+    text:'家人们这款微波炉零辐射，销量第一，蒸出来的菜营养不流失，除菌率100%，全网最低价，买回去绝对不后悔！有问题加我微信私聊。',
     custom:''
   },
   timer: {
     water:'30', sound:true,
     items:[
-      { name:'开场暖场、预告福利', min:'3', note:'提醒点关注，报今天有国补' },
-      { name:'1.5匹变频空调挂机', min:'8', note:'3 号链接，演示防直吹' },
-      { name:'十字对开门冰箱', min:'8', note:'5 号链接，演示大容量' },
-      { name:'10 公斤滚筒洗烘一体机', min:'6', note:'7 号链接' },
-      { name:'整点福利秒杀', min:'5', note:'上架前和运营核对库存' },
-      { name:'返场 + 下场预告', min:'4', note:'' }
+      { name:'开场暖场、预告福利', min:'3', note:'提醒点关注，报今天有国补', prep:'' },
+      { name:'23L 微蒸烤一体机', min:'10', note:'2 号链接，现场烤鸡翅，200℃ 先预热', prep:'10' },
+      { name:'空气炸烤箱', min:'8', note:'4 号链接，现场炸薯条', prep:'5' },
+      { name:'20L 台式微波炉', min:'5', note:'6 号链接，演示 2 分钟热饭', prep:'3' },
+      { name:'整点福利秒杀', min:'5', note:'上架前和运营核对库存', prep:'' },
+      { name:'返场 + 下场预告', min:'4', note:'', prep:'' }
     ]
   },
   review: {
-    mins:'240', stay:'48', uv:'38000', pv:'52000', buyers:'610', orders:'648',
-    gmv:'1685000', refund:'96000', spend:'138000', fans:'1320',
-    good:'空调段讲解节奏好，防直吹演示时停留明显变长',
-    fix:'冰箱段掉人多，开场福利要早点报'
+    mins:'240', stay:'52', uv:'26000', pv:'36000', buyers:'540', orders:'566',
+    gmv:'452000', refund:'31000', spend:'41000', fans:'860',
+    good:'现场烤鸡翅的时候停留明显变长，公屏问价的人多',
+    fix:'微波炉段讲得太快，热饭演示可以提前备好'
   }
 };
 
@@ -649,8 +655,12 @@ var BASE_WORDS = [].concat(
     'bad', '权威背书', '不能借国家、领导人或无依据的权威名义做宣传。'),
   group(['绝对','100%','百分百','百分之百','万能','永久','永不','零风险','无副作用','一次性解决'],
     'bad', '绝对化承诺', '改成有依据的说法，比如「整机保修 6 年（以保修卡为准）」。'),
-  group(['治疗','治愈','防癌','抗癌','消炎','预防疾病','增强免疫力','降血压','零辐射','无辐射'],
+  group(['治疗','治愈','防癌','抗癌','不致癌','消炎','预防疾病','增强免疫力','降血压','排毒','抗衰老'],
     'bad', '医疗用语', '家电不能宣传医疗效果，删掉或改说产品本身的功能。'),
+  group(['零辐射','无辐射','没有辐射','防辐射','不伤身'],
+    'bad', '微波辐射', '微波炉不能说零辐射、无辐射，可以说「微波泄漏符合国家安全标准」（要有检测依据）。'),
+  group(['减肥','减脂','瘦身','刮油','降脂'],
+    'bad', '健康功效', '厨电不能宣传减肥、降脂这类功效，改说做饭本身的体验，比如「少放油也能烤出酥脆口感」。'),
   group(['加微信','微信','加微','加v','vx','私聊','私信我','二维码','线下交易'],
     'bad', '站外引流', '平台禁止引导到站外交易，售后问题引导去店铺客服。'),
   group(['刷单','好评返现','晒图返现','五星好评返'],
@@ -659,6 +669,12 @@ var BASE_WORDS = [].concat(
     'warn', '承诺', '只承诺售后政策里写明的内容。'),
   group(['杀菌','除菌','灭菌','抗菌','抑菌','除螨','抗病毒','除甲醛','净化甲醛'],
     'warn', '功效宣称', '要有第三方检测报告，并照报告原文说，比如「经某检测机构测试，除菌率 99%」。'),
+  group(['营养不流失','锁住营养','保留营养','营养零流失','锁鲜'],
+    'warn', '营养宣称', '营养保留要有检测数据，没有就改说看得见的效果，比如「蒸出来的青菜还是绿的」。'),
+  group(['0油','零油','无油','更健康','健康无油'],
+    'warn', '健康宣称', '「0 油」要属实，空气炸一般改成「不用额外放油」「少油」。'),
+  group(['食品级'],
+    'warn', '材质宣称', '「食品级」要有材质检测报告。'),
   group(['原价','清仓','亏本','跳楼价','骨折价','血亏','白菜价','仅此一次','错过再等一年'],
     'warn', '价格宣传', '「原价」要有真实成交记录；亏本、清仓、仅此一次这类说法必须属实。'),
   group(['免费送'],
@@ -752,7 +768,7 @@ var ORD = ['首先', '再一个', '还有'];
 var T = [
   { k:'开场留人', v:[
     function(d){ return '刚进直播间的家人们先别走！今天主推这款' + d.name + '，价格一会儿我直接算给大家看，先点个关注，等会儿开价别找不到我。'; },
-    function(d){ return '家里' + d.scene + '想添一台、换一台的，公屏扣个 1，我看看有多少人需要，人多我就找运营再申请点名额。'; },
+    function(d){ return '需要的家人们公屏扣个 1，特别是' + d.scene + '，我看看有多少人需要，人多我就找运营再申请点名额。'; },
     function(d){ return '欢迎新进来的朋友！今天这款' + d.name + '有直播间专属机制，日常价' + d.P0 + '元，今天能便宜多少，我马上一笔一笔算给你们听。'; }
   ]},
   { k:'痛点引入', v:[
@@ -794,7 +810,7 @@ function scriptData(){
   var link = (s.link || '').trim();
   return {
     name:(s.name || '').trim() || '这款产品',
-    scene:(s.scene || '').trim() || '家里',
+    scene:(s.scene || '').trim() || '想换新的',
     pain:(s.pain || '').trim() || '（先在左边填用户头疼的事）',
     pts:pts, cnt:['', '一', '两', '三'][pts.length],
     P0:plain(r.p0), F:plain(r.fin), S:plain(r.save), Z:String(r.zhe),
@@ -853,7 +869,7 @@ function renderScript(focusIdx){
 $('#sCopy').addEventListener('click', function(){ copy(scriptText); });
 
 /* ---------- timer ---------- */
-function freshRuntime(){ return { idx:0, itemAcc:0, totalAcc:0, since:null, waterMark:0, endBeeped:false, done:false, lock:null }; }
+function freshRuntime(){ return { idx:0, itemAcc:0, totalAcc:0, since:null, waterMark:0, endBeeped:false, done:false, lock:null, prepped:{} }; }
 var rt = freshRuntime();
 var audio = null;
 
@@ -917,8 +933,11 @@ function pause(){ commit(); rt.since = null; releaseLock(); renderStage(); }
 function toggle(){ if (rt.since) pause(); else start(); }
 function goTo(i){
   commit();
-  rt.idx = Math.max(0, Math.min(i, items().length - 1));
+  var to = Math.max(0, Math.min(i, items().length - 1));
+  if (to <= rt.idx) rt.prepped = {};
+  rt.idx = to;
   rt.itemAcc = 0; rt.endBeeped = false; rt.done = false;
+  $('#prep').hidden = true;
   renderStage();
 }
 function next(){
@@ -961,7 +980,9 @@ function renderStage(){
     $('#stBar').style.width = (plan > 0 ? Math.min(e.item / plan, 1) * 100 : 0) + '%';
     $('#stNote').textContent = (it.note || '').trim() ? '提醒：' + it.note.trim() : '';
     var nx = list[rt.idx + 1];
-    $('#stNext').textContent = nx ? '下一个：' + ((nx.name || '').trim() || '环节 ' + (rt.idx + 2)) + '（' + plain(num(nx.min)) + ' 分钟）' : '这是最后一个环节';
+    $('#stNext').textContent = nx
+      ? '下一个：' + ((nx.name || '').trim() || '环节 ' + (rt.idx + 2)) + '（' + plain(num(nx.min)) + ' 分钟' + (num(nx.prep) > 0 ? '，要提前 ' + plain(num(nx.prep)) + ' 分钟备' : '') + '）'
+      : '这是最后一个环节';
   }
 
   var go = $('#tGo');
@@ -980,6 +1001,20 @@ function tick(){
   var it = items()[rt.idx], e = elapsed();
   var plan = num(it.min) * 60000;
   if (!rt.endBeeped && plan > 0 && e.item >= plan) { rt.endBeeped = true; beep(2); }
+  var list = items(), ahead = Math.max(plan - e.item, 0);
+  for (var j = rt.idx + 1; j < list.length; j++) {
+    var prep = num(list[j].prep) * 60000;
+    if (prep > 0 && !rt.prepped[j] && ahead <= prep) {
+      rt.prepped[j] = true;
+      var nm = (list[j].name || '').trim() || '环节 ' + (j + 1);
+      var nt = (list[j].note || '').trim();
+      $('#prepText').textContent = '还有 ' + Math.max(1, Math.round(ahead / 60000)) + ' 分钟到「' + nm + '」，该预热、备菜了' + (nt ? '（' + nt + '）' : '');
+      $('#prep').hidden = false;
+      beep(1);
+      break;
+    }
+    ahead += num(list[j].min) * 60000;
+  }
   var water = num(state.timer.water) * 60000;
   if (water > 0 && e.total - rt.waterMark >= water) {
     rt.waterMark = e.total;
@@ -1009,20 +1044,25 @@ function renderEditor(){
     min.addEventListener('input', function(){ it.min = min.value; save(); renderStage(); updateTotal(); });
 
     var note = el('input', 'tnote'); note.type = 'text'; note.id = 't-note-' + i; note.value = it.note || '';
-    note.placeholder = '提醒：链接号、要演示的点';
+    note.placeholder = '提醒：链接号、要演示的菜';
     note.setAttribute('aria-label', '第 ' + (i + 1) + ' 个环节提醒');
     note.addEventListener('input', function(){ it.note = note.value; save(); renderStage(); });
+
+    var prep = el('input', 'tprep num'); prep.type = 'text'; prep.id = 't-prep-' + i; prep.value = it.prep || '';
+    prep.inputMode = 'decimal'; prep.placeholder = '提前备（分）';
+    prep.setAttribute('aria-label', '第 ' + (i + 1) + ' 个环节提前几分钟备菜');
+    prep.addEventListener('input', function(){ it.prep = prep.value; rt.prepped = {}; save(); renderStage(); });
 
     var del = el('button', 'tdel'); del.type = 'button'; del.textContent = '删除';
     del.setAttribute('aria-label', '删除第 ' + (i + 1) + ' 个环节');
     del.addEventListener('click', function(){
       list.splice(i, 1);
-      if (!list.length) list.push({ name:'新环节', min:'5', note:'' });
+      if (!list.length) list.push({ name:'新环节', min:'5', note:'', prep:'' });
       if (rt.idx > i || rt.idx >= list.length) rt.idx = Math.max(0, rt.idx - 1);
       save(); renderEditor(); renderStage();
     });
 
-    row.appendChild(n); row.appendChild(name); row.appendChild(min); row.appendChild(note); row.appendChild(del);
+    row.appendChild(n); row.appendChild(name); row.appendChild(min); row.appendChild(note); row.appendChild(prep); row.appendChild(del);
     box.appendChild(row);
   });
   updateTotal();
@@ -1033,7 +1073,7 @@ function updateTotal(){
   $('#tTotal').textContent = '共 ' + list.length + ' 个环节，' + plain(sum) + ' 分钟';
 }
 $('#tAdd').addEventListener('click', function(){
-  items().push({ name:'新环节', min:'5', note:'' });
+  items().push({ name:'新环节', min:'5', note:'', prep:'' });
   save(); renderEditor(); renderStage();
   var rows = $$('.trow', $('#tRows'));
   rows[rows.length - 1].querySelector('.tname').focus();
@@ -1042,6 +1082,7 @@ $('#tGo').addEventListener('click', toggle);
 $('#tNext').addEventListener('click', next);
 $('#tPrev').addEventListener('click', prev);
 $('#waterOk').addEventListener('click', function(){ $('#water').hidden = true; });
+$('#prepOk').addEventListener('click', function(){ $('#prep').hidden = true; });
 
 var resetArm = null;
 $('#tReset').addEventListener('click', function(){
@@ -1053,7 +1094,7 @@ $('#tReset').addEventListener('click', function(){
   }
   clearTimeout(resetArm); resetArm = null; b.textContent = '清零';
   releaseLock(); rt = freshRuntime();
-  $('#water').hidden = true;
+  $('#water').hidden = true; $('#prep').hidden = true;
   renderStage();
 });
 document.addEventListener('keydown', function(e){
@@ -1157,7 +1198,7 @@ $('#resetAll').addEventListener('click', function(){
   clearTimeout(allArm); allArm = null; b.textContent = '恢复示例数据';
   var tab = state.tab;
   state = clone(DEFAULTS); state.tab = tab;
-  releaseLock(); rt = freshRuntime(); $('#water').hidden = true;
+  releaseLock(); rt = freshRuntime(); $('#water').hidden = true; $('#prep').hidden = true;
   save(); syncInputs(); renderAll();
   toast('已恢复示例数据');
 });
