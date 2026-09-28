@@ -1,0 +1,1171 @@
+<title>家电直播工具箱</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&family=ZCOOL+QingKe+HuangYou&display=swap">
+<style>
+:root{
+  --bg:#F1F3F6; --surface:#FFFFFF; --sunk:#E7EBF0; --ink:#131A23; --ink-2:#465262; --ink-3:#6F7B8B; --line:#D3DAE3;
+  --tag:#F6B500; --tag-ink:#1C1500; --tag-soft:#FFF1C7;
+  --live:#E2362F;
+  --ok:#157A4B; --ok-bg:#E1F2E8; --warn:#935C00; --warn-bg:#FFF0CC; --bad:#BF2F29; --bad-bg:#FCE5E3;
+  --btn:#131A23; --btn-ink:#FFFFFF;
+  --f-display:"ZCOOL QingKe HuangYou","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --f-body:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --f-num:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0D1218; --surface:#151C25; --sunk:#1C2530; --ink:#E6EBF1; --ink-2:#A6B1BE; --ink-3:#7F8B9A; --line:#283341;
+    --tag:#F6B500; --tag-ink:#1C1500; --tag-soft:#3A2F0E;
+    --live:#FF5B50;
+    --ok:#4FCB8C; --ok-bg:#15301F; --warn:#F0B64A; --warn-bg:#352911; --bad:#FF6F66; --bad-bg:#3B1B1A;
+    --btn:#E6EBF1; --btn-ink:#0D1218;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0D1218; --surface:#151C25; --sunk:#1C2530; --ink:#E6EBF1; --ink-2:#A6B1BE; --ink-3:#7F8B9A; --line:#283341;
+  --tag:#F6B500; --tag-ink:#1C1500; --tag-soft:#3A2F0E;
+  --live:#FF5B50;
+  --ok:#4FCB8C; --ok-bg:#15301F; --warn:#F0B64A; --warn-bg:#352911; --bad:#FF6F66; --bad-bg:#3B1B1A;
+  --btn:#E6EBF1; --btn-ink:#0D1218;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--f-body); font-size:15px; line-height:1.65;
+  padding-inline:16px; padding-block:0 56px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px; margin:0 auto; display:grid; gap:18px}
+h1,h2,h3{margin:0; text-wrap:balance; line-height:1.3}
+p{margin:0}
+button,input,textarea{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--tag); outline-offset:2px}
+
+/* header */
+.top{padding-block:28px 4px; display:grid; gap:6px}
+.brand{display:flex; align-items:center; gap:12px}
+.brand h1{font-family:var(--f-display); font-weight:400; font-size:clamp(30px,6vw,40px); letter-spacing:.03em}
+.dot{width:12px; height:12px; border-radius:50%; background:var(--live); box-shadow:0 0 0 4px color-mix(in srgb,var(--live) 22%,transparent); flex:none}
+.sub{color:var(--ink-2); max-width:62ch}
+
+/* tabs */
+.tabs{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px}
+.tab{
+  display:grid; gap:0; text-align:left; cursor:pointer;
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:9px 12px 10px;
+}
+.tab:hover{border-color:var(--ink-3)}
+.tab .ph{font-size:11px; letter-spacing:.12em; color:var(--ink-3)}
+.tab .tl{font-weight:500; font-size:15px; white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--tag); border-color:var(--tag); color:var(--tag-ink)}
+.tab[aria-selected="true"] .ph{color:var(--tag-ink); opacity:.7}
+.note{font-size:13px; color:var(--ink-3)}
+
+/* panels */
+.panel{display:grid; gap:14px}
+.phead{display:grid; gap:4px}
+.phead h2{font-size:21px; font-weight:700}
+.phead p{color:var(--ink-2); max-width:66ch}
+.cols{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr); gap:16px; align-items:start}
+.cols.flip{grid-template-columns:minmax(0,6fr) minmax(0,5fr)}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px; display:grid; gap:14px; min-width:0}
+.card h3{font-size:15px; font-weight:700}
+.eyebrow{font-size:12px; letter-spacing:.1em; color:var(--ink-3)}
+
+/* fields */
+.fields{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px}
+.field{display:grid; gap:4px; min-width:0}
+.field.span2{grid-column:1/-1}
+.field label{font-size:13px; color:var(--ink-2)}
+.field input[type="text"],.field textarea,.trow input{
+  width:100%; background:var(--bg); border:1px solid var(--line); border-radius:8px;
+  padding:8px 11px; min-width:0;
+}
+.field textarea{resize:vertical; min-height:74px; line-height:1.6}
+.field input:focus,.field textarea:focus,.trow input:focus{outline:2px solid var(--tag); outline-offset:0; border-color:var(--tag)}
+.num{font-family:var(--f-num); font-variant-numeric:tabular-nums}
+.check{grid-column:1/-1; display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer}
+.check input{width:18px; height:18px; accent-color:var(--btn)}
+.hint{font-size:13px; color:var(--ink-3)}
+
+/* buttons */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;
+  background:var(--btn); color:var(--btn-ink); border:1px solid var(--btn); border-radius:8px;
+  padding:8px 14px; font-size:14px; font-weight:500; white-space:nowrap;
+}
+.btn:hover{opacity:.88}
+.btn.ghost{background:transparent; color:var(--ink); border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--ink-3); opacity:1}
+.btn.sm{padding:3px 10px; font-size:13px}
+.btn.big{padding:12px 22px; font-size:16px}
+.btn:disabled{opacity:.4; cursor:default}
+.row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.between{justify-content:space-between}
+
+/* chips */
+.chip{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; padding:2px 9px; border-radius:999px; white-space:nowrap}
+.chip.bad{background:var(--bad-bg); color:var(--bad)}
+.chip.warn{background:var(--warn-bg); color:var(--warn)}
+.chip.ok{background:var(--ok-bg); color:var(--ok)}
+
+/* price */
+.tagwrap{display:grid; gap:8px; justify-items:start}
+.pricetag{
+  position:relative; display:inline-flex; align-items:baseline; gap:4px;
+  background:var(--tag); color:var(--tag-ink);
+  font-family:var(--f-num); font-weight:700; font-variant-numeric:tabular-nums;
+  font-size:clamp(34px,8vw,50px); line-height:1;
+  padding:14px 22px 14px 38px; border-radius:6px 12px 12px 6px;
+}
+.pricetag::before{
+  content:""; position:absolute; left:14px; top:50%; width:11px; height:11px; margin-top:-5.5px;
+  border-radius:50%; background:var(--surface); box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.28);
+}
+.pricetag .cur{font-size:.48em; font-weight:500}
+#pSave{color:var(--ink-2)}
+.ledger{margin:0; display:grid}
+.lrow{display:grid; grid-template-columns:1fr auto; gap:12px; padding-block:8px; border-bottom:1px dashed var(--line)}
+.lrow dt{color:var(--ink-2)}
+.lrow dd{margin:0; font-family:var(--f-num); font-variant-numeric:tabular-nums}
+.lrow.muted dt,.lrow.muted dd{color:var(--ink-3)}
+.lrow.total{border-bottom:0; border-top:2px solid var(--ink); margin-top:4px; padding-top:10px}
+.lrow.total dt{color:var(--ink); font-weight:700}
+.lrow.total dd{font-weight:700; font-size:18px}
+.warnline{font-size:13px; color:var(--warn); background:var(--warn-bg); padding:8px 12px; border-radius:8px}
+.quote{background:var(--sunk); border-radius:10px; padding:12px 14px; display:grid; gap:6px}
+
+/* script */
+.ssec{display:grid; gap:4px; padding-block:12px; border-top:1px solid var(--line)}
+.ssec:first-child{border-top:0; padding-top:0}
+.shead{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.shead h3{font-size:13px; letter-spacing:.08em; color:var(--ink-3); font-weight:500}
+.ssec p{font-size:15.5px}
+.selfcheck{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+
+/* words */
+.marked{
+  background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:12px 14px;
+  white-space:pre-wrap; word-break:break-word; line-height:2; min-height:74px;
+}
+mark{background:none; color:inherit; padding:1px 2px; border-radius:3px}
+mark.bad{background:var(--bad-bg); color:var(--bad); box-shadow:inset 0 -2px 0 var(--bad)}
+mark.warn{background:var(--warn-bg); color:var(--warn); box-shadow:inset 0 -2px 0 var(--warn)}
+.hits{list-style:none; margin:0; padding:0; display:grid}
+.hits li{display:grid; grid-template-columns:auto 1fr; gap:4px 10px; padding-block:10px; border-top:1px solid var(--line)}
+.hits li:first-child{border-top:0}
+.hits .w{font-weight:700}
+.hits .w small{font-weight:400; color:var(--ink-3); margin-left:6px}
+.hits .t{grid-column:2; font-size:13.5px; color:var(--ink-2)}
+.legend{display:flex; flex-wrap:wrap; gap:8px}
+
+/* timer */
+.stage{gap:10px; padding:22px}
+.status{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:13px; color:var(--ink-2)}
+.state{display:inline-flex; align-items:center; gap:8px; font-weight:500}
+.state .led{width:10px; height:10px; border-radius:50%; background:var(--ink-3)}
+.stage.live .state .led{background:var(--live); animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--live) 25%,transparent)}}
+#stName{font-family:var(--f-display); font-weight:400; font-size:clamp(24px,4.6vw,32px); letter-spacing:.02em; margin-top:6px}
+#stIdx{font-size:13px; color:var(--ink-3)}
+.clock{font-family:var(--f-num); font-weight:700; font-variant-numeric:tabular-nums; font-size:clamp(60px,15vw,112px); line-height:1; letter-spacing:-.02em; margin-block:8px 4px}
+.stage.soon .clock{color:var(--warn)}
+.stage.over .clock{color:var(--live)}
+.bar{height:8px; border-radius:99px; background:var(--sunk); overflow:hidden}
+.bar i{display:block; height:100%; width:0; background:var(--tag); border-radius:99px; transition:width .25s linear}
+.stage.over .bar i{background:var(--live)}
+#stNote{font-weight:500}
+#stNext{color:var(--ink-2); font-size:14px}
+.water{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; background:var(--tag-soft); border:1px solid var(--tag); border-radius:10px; padding:10px 14px; font-weight:500}
+.kbd{font-size:12px; color:var(--ink-3)}
+.trows{display:grid; gap:8px}
+.trow{
+  display:grid; grid-template-columns:34px minmax(0,1fr) 64px auto; gap:6px; align-items:center;
+  grid-template-areas:"n name min del" ". note note note";
+  padding:6px; border-radius:10px; border:1px solid transparent;
+}
+.trow .tnum{grid-area:n}
+.trow .tname{grid-area:name}
+.trow .tmin{grid-area:min}
+.trow .tnote{grid-area:note; font-size:13px}
+.trow .tdel{grid-area:del}
+.trow.cur{background:var(--tag-soft); border-color:var(--tag)}
+.trow.done .tnum{text-decoration:line-through; color:var(--ink-3)}
+.tnum{width:34px; height:34px; border-radius:8px; border:1px solid var(--line); background:var(--surface); cursor:pointer; font-family:var(--f-num); font-size:13px}
+.tnum:hover{border-color:var(--ink-3)}
+.trow input{padding:7px 9px; font-size:14px}
+.trow .tmin{text-align:center}
+.tdel{border:0; background:none; color:var(--ink-3); cursor:pointer; padding:6px 8px; border-radius:6px; font-size:13px}
+.tdel:hover{color:var(--bad); background:var(--bad-bg)}
+
+/* review */
+.tiles{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
+.tile{background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:grid; gap:2px; align-content:start}
+.tile .k{font-size:13px; color:var(--ink-2); display:flex; justify-content:space-between; gap:6px; align-items:center}
+.tile .v{font-family:var(--f-num); font-variant-numeric:tabular-nums; font-weight:700; font-size:24px; line-height:1.3}
+.tile .f{font-size:12px; color:var(--ink-3)}
+.tile.bad{border-color:var(--bad)}
+.tile.bad .v{color:var(--bad)}
+.summary{background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:12px 14px; white-space:pre-wrap; word-break:break-word; font-size:14px; line-height:1.8; margin:0; font-family:var(--f-body)}
+
+/* footer, toast */
+.foot{border-top:1px solid var(--line); padding-top:16px; display:flex; flex-wrap:wrap; gap:10px 16px; justify-content:space-between; align-items:center; color:var(--ink-3); font-size:13px}
+.foot p{max-width:70ch}
+.toast{
+  position:fixed; left:50%; transform:translateX(-50%);
+  bottom:calc(20px + env(safe-area-inset-bottom,0px));
+  background:var(--btn); color:var(--btn-ink); padding:9px 18px; border-radius:999px; font-size:14px; z-index:10;
+  box-shadow:0 6px 20px rgba(0,0,0,.18);
+}
+
+@media (max-width:860px){
+  .cols,.cols.flip{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  .tabs{gap:4px}
+  .tab{padding:7px 4px 8px; text-align:center}
+  .tab .tl{font-size:13px}
+  .tab .ph{font-size:10px; letter-spacing:.06em}
+  .card{padding:14px}
+  .fields{gap:10px}
+  .tiles{gap:8px}
+  .tile .v{font-size:20px}
+  .trow{grid-template-columns:34px minmax(0,1fr) 58px auto}
+}
+@media (prefers-reduced-motion: reduce){
+  .stage.live .state .led{animation:none}
+  .bar i{transition:none}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="dot" aria-hidden="true"></span><h1>家电直播工具箱</h1></div>
+    <p class="sub">开播前算到手价、写讲款话术、查违禁词，开播时按排品表倒计时，下播后算数据写复盘。打开就能用，不用登录。</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="工具">
+    <button class="tab" role="tab" type="button" id="tab-price" aria-controls="price" data-tab="price"><span class="ph">播前</span><span class="tl">算到手价</span></button>
+    <button class="tab" role="tab" type="button" id="tab-script" aria-controls="script" data-tab="script"><span class="ph">播前</span><span class="tl">写话术</span></button>
+    <button class="tab" role="tab" type="button" id="tab-words" aria-controls="words" data-tab="words"><span class="ph">播前</span><span class="tl">查违禁词</span></button>
+    <button class="tab" role="tab" type="button" id="tab-timer" aria-controls="timer" data-tab="timer"><span class="ph">播中</span><span class="tl">场控计时</span></button>
+    <button class="tab" role="tab" type="button" id="tab-review" aria-controls="review" data-tab="review"><span class="ph">播后</span><span class="tl">下播复盘</span></button>
+  </nav>
+  <p class="note">里面先填了示例数字，改成自己的就行。填的内容只保存在这台设备的浏览器里。</p>
+
+  <!-- 算到手价 -->
+  <section class="panel" id="price" role="tabpanel" aria-labelledby="tab-price">
+    <div class="phead">
+      <h2>到手价计算</h2>
+      <p>按立减、满减、国补的顺序一层层算，得出到手价，顺手生成一句能直接念的报价。</p>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <div class="fields">
+          <div class="field"><label for="p-p0">日常价（元）</label><input type="text" inputmode="decimal" class="num" id="p-p0" data-bind="price.p0"></div>
+          <div class="field"><label for="p-d1">直播间立减（元）</label><input type="text" inputmode="decimal" class="num" id="p-d1" data-bind="price.d1"></div>
+          <div class="field"><label for="p-th">满减门槛（元）</label><input type="text" inputmode="decimal" class="num" id="p-th" data-bind="price.th"></div>
+          <div class="field"><label for="p-tv">满减金额（元）</label><input type="text" inputmode="decimal" class="num" id="p-tv" data-bind="price.tv"></div>
+          <label class="check" for="p-sub"><input type="checkbox" id="p-sub" data-bind="price.sub">叠加国补（以旧换新补贴）</label>
+          <div class="field"><label for="p-rate">国补比例（%）</label><input type="text" inputmode="decimal" class="num" id="p-rate" data-bind="price.rate"></div>
+          <div class="field"><label for="p-cap">单件封顶（元）</label><input type="text" inputmode="decimal" class="num" id="p-cap" data-bind="price.cap"></div>
+          <div class="field span2"><label for="p-gift">赠品</label><input type="text" id="p-gift" data-bind="price.gift" placeholder="比如：送基础安装和一年延保"></div>
+        </div>
+        <p class="hint">没有满减就把满减金额填 0。国补按券后价计算；2025 年的标准是一级能效 20%、二级 15%，单件最多补 2000 元，各地规则不同，以当地最新政策为准。</p>
+      </div>
+      <div class="card">
+        <div class="tagwrap">
+          <span class="eyebrow">到手价</span>
+          <div class="pricetag" id="pTag"></div>
+          <p id="pSave"></p>
+        </div>
+        <dl class="ledger" id="pLedger"></dl>
+        <p class="warnline" id="pGap" hidden></p>
+        <div class="quote">
+          <div class="row between"><span class="eyebrow">报价话术</span><button class="btn ghost sm" type="button" id="pCopy">复制</button></div>
+          <p id="pLine"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 写话术 -->
+  <section class="panel" id="script" role="tabpanel" aria-labelledby="tab-script" hidden>
+    <div class="phead">
+      <h2>讲款话术</h2>
+      <p>填好产品和卖点，按「留人 → 痛点 → 卖点 → 报价 → 促单 → 售后」生成一套讲解。每段都能换一种说法，生成后会自动查一遍违禁词。</p>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <div class="fields">
+          <div class="field span2"><label for="s-name">产品</label><input type="text" id="s-name" data-bind="script.name"></div>
+          <div class="field"><label for="s-scene">适合放在哪 / 适合谁</label><input type="text" id="s-scene" data-bind="script.scene"></div>
+          <div class="field"><label for="s-link">小黄车链接号</label><input type="text" inputmode="numeric" class="num" id="s-link" data-bind="script.link"></div>
+          <div class="field span2"><label for="s-pain">用户头疼的事</label><textarea id="s-pain" rows="2" data-bind="script.pain"></textarea></div>
+          <div class="field span2"><label for="s-s1">卖点一</label><input type="text" id="s-s1" data-bind="script.s1"></div>
+          <div class="field span2"><label for="s-s2">卖点二</label><input type="text" id="s-s2" data-bind="script.s2"></div>
+          <div class="field span2"><label for="s-s3">卖点三</label><input type="text" id="s-s3" data-bind="script.s3"></div>
+          <div class="field span2"><label for="s-limit">限量 / 库存（要真实）</label><input type="text" id="s-limit" data-bind="script.limit"></div>
+          <div class="field span2"><label for="s-after">售后保障</label><input type="text" id="s-after" data-bind="script.after"></div>
+        </div>
+        <p class="hint">价格和赠品直接用「算到手价」里的数字，那边改了这里会跟着变。</p>
+      </div>
+      <div class="card">
+        <div class="row between">
+          <div class="selfcheck" id="sCheck"></div>
+          <button class="btn sm" type="button" id="sCopy">复制整套</button>
+        </div>
+        <div id="sOut"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 查违禁词 -->
+  <section class="panel" id="words" role="tabpanel" aria-labelledby="tab-words" hidden>
+    <div class="phead">
+      <h2>违禁词自查</h2>
+      <p>贴一段话术进来，标出广告法极限词、功效宣称、引导站外交易这些风险词，并给出改法。</p>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <div class="field">
+          <label for="w-text">要检查的话术</label>
+          <textarea id="w-text" rows="8" data-bind="words.text"></textarea>
+        </div>
+        <div class="field">
+          <label for="w-custom">自己加的词（用逗号或空格隔开）</label>
+          <input type="text" id="w-custom" data-bind="words.custom" placeholder="比如：公司内部要求别说的词">
+        </div>
+        <div class="legend">
+          <span class="chip bad">禁用：直接改掉</span>
+          <span class="chip warn">需证明：要有报告或属实才能说</span>
+        </div>
+        <p class="hint">词库只是参考，平台规则经常更新，以平台最新公告为准。</p>
+      </div>
+      <div class="card">
+        <div class="selfcheck" id="wSum"></div>
+        <div class="marked" id="wMarked" aria-live="polite"></div>
+        <ul class="hits" id="wList"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 场控计时 -->
+  <section class="panel" id="timer" role="tabpanel" aria-labelledby="tab-timer" hidden>
+    <div class="phead">
+      <h2>场控计时</h2>
+      <p>按排品表给每个环节倒计时，最后一分钟变黄，超时变红，到点提醒喝水。开着这一页，屏幕不会自动熄灭（大部分手机支持）。</p>
+    </div>
+    <div class="cols flip">
+      <div class="card stage" id="stage">
+        <div class="status">
+          <span class="state"><span class="led" aria-hidden="true"></span><span id="stState">未开始</span></span>
+          <span class="num" id="stTotal"></span>
+        </div>
+        <h3 id="stName"></h3>
+        <p id="stIdx"></p>
+        <div class="clock" id="stClock" role="timer" aria-live="off">00:00</div>
+        <div class="bar" aria-hidden="true"><i id="stBar"></i></div>
+        <p id="stNote"></p>
+        <p id="stNext"></p>
+        <div class="water" id="water" hidden>
+          <span id="waterText">该喝口水了</span>
+          <button class="btn sm" type="button" id="waterOk">喝了</button>
+        </div>
+        <div class="row">
+          <button class="btn big" type="button" id="tGo">开始计时</button>
+          <button class="btn ghost" type="button" id="tPrev">上一个</button>
+          <button class="btn ghost" type="button" id="tNext">下一个</button>
+          <button class="btn ghost" type="button" id="tReset">清零</button>
+        </div>
+        <p class="kbd">键盘：空格 开始/暂停，→ 下一个，← 上一个</p>
+      </div>
+      <div class="card">
+        <div class="row between"><h3>排品表</h3><span class="hint" id="tTotal"></span></div>
+        <div class="trows" id="tRows"></div>
+        <div class="row between">
+          <button class="btn ghost sm" type="button" id="tAdd">加一个环节</button>
+          <span class="hint">点序号可以直接跳过去</span>
+        </div>
+        <div class="fields">
+          <div class="field"><label for="t-water">每隔几分钟提醒喝水</label><input type="text" inputmode="numeric" class="num" id="t-water" data-bind="timer.water"></div>
+          <label class="check" for="t-sound" style="grid-column:auto"><input type="checkbox" id="t-sound" data-bind="timer.sound">环节到点时响提示音</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 下播复盘 -->
+  <section class="panel" id="review" role="tabpanel" aria-labelledby="tab-review" hidden>
+    <div class="phead">
+      <h2>下播复盘</h2>
+      <p>把后台数据填进来，算出转化率、UV 价值、GPM、投放 ROI，再生成一段能直接发到群里的复盘小结。</p>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <div class="fields">
+          <div class="field"><label for="r-mins">直播时长（分钟）</label><input type="text" inputmode="decimal" class="num" id="r-mins" data-bind="review.mins"></div>
+          <div class="field"><label for="r-stay">人均停留（秒）</label><input type="text" inputmode="decimal" class="num" id="r-stay" data-bind="review.stay"></div>
+          <div class="field"><label for="r-uv">观看人数</label><input type="text" inputmode="decimal" class="num" id="r-uv" data-bind="review.uv"></div>
+          <div class="field"><label for="r-pv">观看次数</label><input type="text" inputmode="decimal" class="num" id="r-pv" data-bind="review.pv"></div>
+          <div class="field"><label for="r-buyers">成交人数</label><input type="text" inputmode="decimal" class="num" id="r-buyers" data-bind="review.buyers"></div>
+          <div class="field"><label for="r-orders">成交订单数</label><input type="text" inputmode="decimal" class="num" id="r-orders" data-bind="review.orders"></div>
+          <div class="field"><label for="r-gmv">成交金额（元）</label><input type="text" inputmode="decimal" class="num" id="r-gmv" data-bind="review.gmv"></div>
+          <div class="field"><label for="r-refund">退款金额（元）</label><input type="text" inputmode="decimal" class="num" id="r-refund" data-bind="review.refund"></div>
+          <div class="field"><label for="r-spend">投流消耗（元）</label><input type="text" inputmode="decimal" class="num" id="r-spend" data-bind="review.spend"></div>
+          <div class="field"><label for="r-fans">新增粉丝</label><input type="text" inputmode="decimal" class="num" id="r-fans" data-bind="review.fans"></div>
+          <div class="field span2"><label for="r-good">这场做得好的</label><textarea id="r-good" rows="2" data-bind="review.good"></textarea></div>
+          <div class="field span2"><label for="r-fix">下场要改的</label><textarea id="r-fix" rows="2" data-bind="review.fix"></textarea></div>
+        </div>
+        <p class="hint">各平台口径略有差别，这里按常用算法：UV 价值和转化率用观看人数，GPM 用观看次数。</p>
+      </div>
+      <div class="card">
+        <div class="tiles" id="rTiles"></div>
+        <div class="row between"><span class="eyebrow">复盘小结</span><button class="btn ghost sm" type="button" id="rCopy">复制</button></div>
+        <pre class="summary" id="rSum"></pre>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>价格、国补比例和违禁词只作参考，以平台和当地最新规则为准。你填的内容只保存在这台设备的浏览器里，别人看不到。</p>
+    <button class="btn ghost sm" type="button" id="resetAll">恢复示例数据</button>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+'use strict';
+
+var KEY = 'jdzb-toolkit-v1';
+var DEFAULTS = {
+  tab: 'price',
+  price: { p0:'3999', d1:'300', th:'3000', tv:'200', sub:true, rate:'20', cap:'2000', gift:'送基础安装和一年延保' },
+  script: {
+    name:'新一级能效 1.5匹变频空调挂机', scene:'卧室、小书房', link:'3',
+    pain:'夏天开一晚上空调，电费心疼，早上起来还头疼',
+    s1:'新一级能效变频，同样开一晚更省电', s2:'防直吹风感，睡觉吹不到头', s3:'自清洁功能，换季不用自己拆洗',
+    limit:'这一轮只放 200 台', after:'7 天无理由退货，官方师傅上门安装',
+    v:[0,0,0,0,0,0]
+  },
+  words: {
+    text:'家人们这款空调是全网最低价，销量第一，除菌率100%，买回去绝对不后悔！有问题加我微信私聊，保证给你最好的售后。',
+    custom:''
+  },
+  timer: {
+    water:'30', sound:true,
+    items:[
+      { name:'开场暖场、预告福利', min:'3', note:'提醒点关注，报今天有国补' },
+      { name:'1.5匹变频空调挂机', min:'8', note:'3 号链接，演示防直吹' },
+      { name:'十字对开门冰箱', min:'8', note:'5 号链接，演示大容量' },
+      { name:'10 公斤滚筒洗烘一体机', min:'6', note:'7 号链接' },
+      { name:'整点福利秒杀', min:'5', note:'上架前和运营核对库存' },
+      { name:'返场 + 下场预告', min:'4', note:'' }
+    ]
+  },
+  review: {
+    mins:'240', stay:'48', uv:'38000', pv:'52000', buyers:'610', orders:'648',
+    gmv:'1685000', refund:'96000', spend:'138000', fans:'1320',
+    good:'空调段讲解节奏好，防直吹演示时停留明显变长',
+    fix:'冰箱段掉人多，开场福利要早点报'
+  }
+};
+
+/* ---------- helpers ---------- */
+function $(s, r){ return (r || document).querySelector(s); }
+function $$(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+function el(tag, cls){ var e = document.createElement(tag); if (cls) e.className = cls; return e; }
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function num(v){ var n = parseFloat(String(v == null ? '' : v).replace(/[,，\s]/g, '')); return isFinite(n) ? n : 0; }
+function r2(n){ return Math.round(n * 100) / 100; }
+function plain(n){ return String(r2(n)); }
+function money(n){
+  n = r2(n);
+  var d = Number.isInteger(n) ? 0 : 2;
+  return n.toLocaleString('zh-CN', { minimumFractionDigits:d, maximumFractionDigits:d });
+}
+function wan(n){
+  if (Math.abs(n) >= 10000) return String(Math.round(n / 1000) / 10) + '万';
+  return Math.round(n).toLocaleString('zh-CN');
+}
+function pct(x){ return (x * 100).toFixed(2) + '%'; }
+
+/* ---------- state ---------- */
+function load(){
+  var s = clone(DEFAULTS);
+  try {
+    var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (raw && typeof raw === 'object') {
+      Object.keys(s).forEach(function(k){
+        if (k === 'tab') { if (typeof raw.tab === 'string') s.tab = raw.tab; return; }
+        if (raw[k] && typeof raw[k] === 'object') Object.assign(s[k], raw[k]);
+      });
+    }
+  } catch (e) {}
+  if (!Array.isArray(s.timer.items) || !s.timer.items.length) s.timer.items = clone(DEFAULTS.timer.items);
+  if (!Array.isArray(s.script.v)) s.script.v = [0,0,0,0,0,0];
+  return s;
+}
+var state = load();
+var saveTimer = null;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }, 250);
+}
+
+/* ---------- toast & copy ---------- */
+var toastTimer = null;
+function toast(msg){
+  var t = $('#toast');
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.hidden = true; }, 1800);
+}
+function fallbackCopy(text){
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) {}
+  ta.remove();
+  toast(ok ? '已复制' : '没复制成功，请长按文字手动复制');
+}
+function copy(text){
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function(){ toast('已复制'); }, function(){ fallbackCopy(text); });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+/* ---------- tabs ---------- */
+var TABS = ['price', 'script', 'words', 'timer', 'review'];
+function activate(name, focus){
+  if (TABS.indexOf(name) < 0) name = 'price';
+  state.tab = name; save();
+  $$('.tab').forEach(function(b){
+    var on = b.dataset.tab === name;
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+    b.tabIndex = on ? 0 : -1;
+    if (on && focus) b.focus();
+  });
+  $$('.panel').forEach(function(p){ p.hidden = p.id !== name; });
+}
+$$('.tab').forEach(function(b){
+  b.addEventListener('click', function(){ activate(b.dataset.tab); });
+  b.addEventListener('keydown', function(e){
+    var i = TABS.indexOf(b.dataset.tab);
+    if (e.key === 'ArrowRight') { e.preventDefault(); activate(TABS[(i + 1) % TABS.length], true); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); activate(TABS[(i + TABS.length - 1) % TABS.length], true); }
+  });
+});
+
+/* ---------- price ---------- */
+function calcPrice(p){
+  var p0 = num(p.p0), d1 = Math.min(num(p.d1), p0), th = num(p.th), tv = num(p.tv);
+  var a = Math.max(p0 - d1, 0);
+  var hasFull = tv > 0;
+  var fullOk = hasFull && a >= th;
+  var full = fullOk ? Math.min(tv, a) : 0;
+  var b = a - full;
+  var rate = num(p.rate), cap = num(p.cap);
+  var raw = p.sub && rate > 0 ? b * rate / 100 : 0;
+  var capped = raw > 0 && cap > 0 && raw > cap;
+  var sub = r2(capped ? cap : raw);
+  var fin = r2(Math.max(b - sub, 0));
+  return {
+    p0:p0, d1:d1, th:th, tv:tv, a:a, hasFull:hasFull, fullOk:fullOk, full:full, b:b,
+    rate:rate, cap:cap, sub:sub, capped:capped, fin:fin,
+    save:r2(p0 - fin), zhe: p0 > 0 ? Math.round(fin / p0 * 100) / 10 : 0,
+    gap: hasFull && !fullOk ? r2(th - a) : 0
+  };
+}
+function giftSentence(p){ var g = (p.gift || '').trim(); return g ? '下单还' + g + '。' : ''; }
+function priceSteps(r){
+  var s = [];
+  if (r.d1 > 0) s.push('先立减' + plain(r.d1));
+  if (r.fullOk) s.push('再满' + plain(r.th) + '减' + plain(r.tv));
+  if (r.sub > 0) s.push('叠加国补再省' + plain(r.sub));
+  return s;
+}
+function renderPrice(){
+  var p = state.price, r = calcPrice(p);
+  var tag = $('#pTag');
+  tag.textContent = '';
+  var cur = el('span', 'cur'); cur.textContent = '¥';
+  tag.appendChild(cur); tag.appendChild(document.createTextNode(money(r.fin)));
+
+  var rows = [['日常价', money(r.p0), '']];
+  if (r.d1 > 0) rows.push(['直播间立减', '−' + money(r.d1), '']);
+  if (r.hasFull) rows.push(['满' + plain(r.th) + '减' + plain(r.tv) + (r.fullOk ? '' : '（没满足）'), r.fullOk ? '−' + money(r.full) : '—', r.fullOk ? '' : 'muted']);
+  if (p.sub) rows.push(['国补 ' + plain(r.rate) + '%' + (r.capped ? '（封顶 ' + plain(r.cap) + '）' : ''), r.sub > 0 ? '−' + money(r.sub) : '—', r.sub > 0 ? '' : 'muted']);
+  rows.push(['到手价', money(r.fin), 'total']);
+  var dl = $('#pLedger'); dl.textContent = '';
+  rows.forEach(function(x){
+    var row = el('div', 'lrow ' + x[2]);
+    var dt = el('dt'); dt.textContent = x[0];
+    var dd = el('dd'); dd.textContent = x[1];
+    row.appendChild(dt); row.appendChild(dd); dl.appendChild(row);
+  });
+
+  $('#pSave').textContent = r.p0 > 0 ? '相当于 ' + r.zhe + ' 折，比日常价省 ' + money(r.save) + ' 元' : '先填日常价';
+  var gap = $('#pGap');
+  gap.hidden = !(r.gap > 0);
+  if (r.gap > 0) gap.textContent = '立减后是 ' + money(r.a) + ' 元，还差 ' + money(r.gap) + ' 元才够满减门槛。';
+
+  var steps = priceSteps(r);
+  $('#pLine').textContent = steps.length
+    ? '日常价' + plain(r.p0) + '元，今天直播间' + steps.join('，') + '，到手只要' + plain(r.fin) + '元！' + giftSentence(p)
+    : '今天直播间到手' + plain(r.fin) + '元！' + giftSentence(p);
+}
+$('#pCopy').addEventListener('click', function(){ copy($('#pLine').textContent); });
+
+/* ---------- words ---------- */
+function group(list, s, c, t){ return list.map(function(w){ return { w:w, s:s, c:c, t:t }; }); }
+var BASE_WORDS = [].concat(
+  // 正常用法，匹配到就跳过，避免误报
+  group(['第一次','第一时间','第一步','第一天','第一轮','第一波'], 'skip', '', ''),
+  group(['最好','最佳','最强','最大','最高','最低','最便宜','最省','最省电','最新','最先进','最高级','最优','最受欢迎','最划算','最实惠','最火','最畅销','最专业','最安全'],
+    'bad', '极限用语', '广告法不让用「最」做比较，改说具体事实，比如「新一级能效」「月销 2 万台（后台可查）」。'),
+  group(['第一','销量第一','排名第一','全网第一','no.1','top1'],
+    'bad', '极限用语', '不能说排名第一，改成「热销款」「人气款」，或者引用能查到的具体数据。'),
+  group(['唯一','独一无二','首个','首选','顶级','顶尖','极致','至尊','巅峰','王牌','冠军','史无前例','前所未有','遥遥领先','无敌','天花板'],
+    'bad', '极限用语', '夸张绝对的说法换成具体参数或体验，比如「制冷 3 分钟就能感觉到凉」。'),
+  group(['全网最低','全网最低价','史上最低','史上最低价','最低价','秒杀全网','全网底价'],
+    'bad', '价格用语', '不能说全网 / 史上最低，改成「直播间专享价」「今天到手价」。'),
+  group(['国家级','世界级','全球级','国家指定','特供','专供','驰名商标','领导人'],
+    'bad', '权威背书', '不能借国家、领导人或无依据的权威名义做宣传。'),
+  group(['绝对','100%','百分百','百分之百','万能','永久','永不','零风险','无副作用','一次性解决'],
+    'bad', '绝对化承诺', '改成有依据的说法，比如「整机保修 6 年（以保修卡为准）」。'),
+  group(['治疗','治愈','防癌','抗癌','消炎','预防疾病','增强免疫力','降血压','零辐射','无辐射'],
+    'bad', '医疗用语', '家电不能宣传医疗效果，删掉或改说产品本身的功能。'),
+  group(['加微信','微信','加微','加v','vx','私聊','私信我','二维码','线下交易'],
+    'bad', '站外引流', '平台禁止引导到站外交易，售后问题引导去店铺客服。'),
+  group(['刷单','好评返现','晒图返现','五星好评返'],
+    'bad', '违规营销', '平台禁止用返现换好评。'),
+  group(['保证'],
+    'warn', '承诺', '只承诺售后政策里写明的内容。'),
+  group(['杀菌','除菌','灭菌','抗菌','抑菌','除螨','抗病毒','除甲醛','净化甲醛'],
+    'warn', '功效宣称', '要有第三方检测报告，并照报告原文说，比如「经某检测机构测试，除菌率 99%」。'),
+  group(['原价','清仓','亏本','跳楼价','骨折价','血亏','白菜价','仅此一次','错过再等一年'],
+    'warn', '价格宣传', '「原价」要有真实成交记录；亏本、清仓、仅此一次这类说法必须属实。'),
+  group(['免费送'],
+    'warn', '赠品', '赠品要说清楚是什么、送多少，不能虚标价值。'),
+  group(['淘宝','天猫','京东','拼多多','抖音','快手','小红书'],
+    'warn', '提及其他平台', '在一个平台直播时，别提别的平台名字。')
+);
+var wordCache = { key:null, list:null };
+function wordList(){
+  var custom = state.words.custom || '';
+  if (wordCache.key === custom) return wordCache.list;
+  var extra = custom.split(/[,，、;；\s]+/).filter(Boolean).map(function(w){
+    return { w:w, s:'bad', c:'自己加的词', t:'这是你自己加进词库的词。' };
+  });
+  var list = BASE_WORDS.concat(extra).map(function(it){
+    return { w:it.w, s:it.s, c:it.c, t:it.t, lw:it.w.toLowerCase() };
+  });
+  list.sort(function(a, b){ return b.lw.length - a.lw.length; });
+  wordCache = { key:custom, list:list };
+  return list;
+}
+function scan(text){
+  var list = wordList(), lower = text.toLowerCase(), hits = [], i = 0;
+  while (i < lower.length) {
+    var m = null;
+    for (var j = 0; j < list.length; j++) {
+      if (lower.startsWith(list[j].lw, i)) { m = list[j]; break; }
+    }
+    if (m) {
+      if (m.s !== 'skip') hits.push({ i:i, len:m.lw.length, it:m });
+      i += m.lw.length;
+    } else {
+      i++;
+    }
+  }
+  return hits;
+}
+function renderWords(){
+  var text = state.words.text || '';
+  var hits = scan(text);
+  var box = $('#wMarked'); box.textContent = '';
+  if (!text.trim()) {
+    box.textContent = '左边还没有内容。';
+  } else {
+    var last = 0;
+    hits.forEach(function(h){
+      if (h.i > last) box.appendChild(document.createTextNode(text.slice(last, h.i)));
+      var m = el('mark', h.it.s);
+      m.textContent = text.slice(h.i, h.i + h.len);
+      m.title = h.it.c + '：' + h.it.t;
+      box.appendChild(m);
+      last = h.i + h.len;
+    });
+    if (last < text.length) box.appendChild(document.createTextNode(text.slice(last)));
+  }
+
+  var bad = hits.filter(function(h){ return h.it.s === 'bad'; }).length;
+  var warn = hits.length - bad;
+  var sum = $('#wSum'); sum.textContent = '';
+  if (!hits.length) {
+    var ok = el('span', 'chip ok'); ok.textContent = text.trim() ? '没发现风险词' : '等你贴话术';
+    sum.appendChild(ok);
+  } else {
+    if (bad) { var b = el('span', 'chip bad'); b.textContent = bad + ' 处禁用'; sum.appendChild(b); }
+    if (warn) { var w = el('span', 'chip warn'); w.textContent = warn + ' 处需证明'; sum.appendChild(w); }
+  }
+
+  var groups = [];
+  var byWord = {};
+  hits.forEach(function(h){
+    var k = h.it.lw;
+    if (!byWord[k]) { byWord[k] = { it:h.it, word:text.slice(h.i, h.i + h.len), n:0 }; groups.push(byWord[k]); }
+    byWord[k].n++;
+  });
+  groups.sort(function(a, b){ return (a.it.s === 'bad' ? 0 : 1) - (b.it.s === 'bad' ? 0 : 1); });
+  var ul = $('#wList'); ul.textContent = '';
+  groups.forEach(function(g){
+    var li = el('li');
+    var chip = el('span', 'chip ' + g.it.s); chip.textContent = g.it.s === 'bad' ? '禁用' : '需证明';
+    var w = el('span', 'w'); w.textContent = g.word;
+    var small = el('small'); small.textContent = g.it.c + (g.n > 1 ? ' · 出现 ' + g.n + ' 次' : '');
+    w.appendChild(small);
+    var t = el('span', 't'); t.textContent = g.it.t;
+    li.appendChild(chip); li.appendChild(w); li.appendChild(t);
+    ul.appendChild(li);
+  });
+}
+
+/* ---------- script ---------- */
+var ORD = ['首先', '再一个', '还有'];
+var T = [
+  { k:'开场留人', v:[
+    function(d){ return '刚进直播间的家人们先别走！今天主推这款' + d.name + '，价格一会儿我直接算给大家看，先点个关注，等会儿开价别找不到我。'; },
+    function(d){ return '家里' + d.scene + '想添一台、换一台的，公屏扣个 1，我看看有多少人需要，人多我就找运营再申请点名额。'; },
+    function(d){ return '欢迎新进来的朋友！今天这款' + d.name + '有直播间专属机制，日常价' + d.P0 + '元，今天能便宜多少，我马上一笔一笔算给你们听。'; }
+  ]},
+  { k:'痛点引入', v:[
+    function(d){ return '家人们，是不是' + d.pain + '？很多家人就是因为这个才下定决心换新的。'; },
+    function(d){ return '我知道很多家人的烦恼是：' + d.pain + '。今天这款就是冲着这个来的。'; },
+    function(d){ return '问一下，家里有没有这种情况：' + d.pain + '？有的公屏扣个「有」。'; }
+  ]},
+  { k:'卖点讲解', v:[
+    function(d){ return d.pts.length ? '这款给大家讲' + d.cnt + '点。' + d.pts.map(function(s, i){ return ORD[i] + '，' + s; }).join('；') + '。' : '（先在左边填卖点）'; },
+    function(d){ return d.pts.length ? '为什么推荐它，我说' + d.cnt + '个实在的：' + d.pts.join('；') + '。' : '（先在左边填卖点）'; },
+    function(d){ return d.pts.length ? '我挨个演示给大家看：' + d.pts.join('；') + '。想看哪个细节，打在公屏上。' : '（先在左边填卖点）'; }
+  ]},
+  { k:'报价', v:[
+    function(d){ return d.steps.length
+      ? '日常价' + d.P0 + '元，今天直播间' + d.steps.join('，') + '，算下来到手只要' + d.F + '元，相当于打了' + d.Z + '折。' + d.gift
+      : '今天直播间到手' + d.F + '元。' + d.gift; },
+    function(d){ return d.chain + '到手就是' + d.F + '元！比日常价省了' + d.S + '元。' + d.gift; },
+    function(d){ return '报个价：日常价' + d.P0 + '元，今天到手' + d.F + '元，省下的' + d.S + '元够再添个小家电了。' + d.gift; }
+  ]},
+  { k:'促单', v:[
+    function(d){ return (d.limit ? d.limit + '，' : '') + '拍完就恢复日常价。想要的现在点' + d.link + '，先拍先发。'; },
+    function(d){ return '库存我已经让场控上好了' + (d.limit ? '，' + d.limit : '') + '。喜欢的别犹豫，' + d.link + '，去拍！'; },
+    function(d){ return '倒数五个数，' + d.link + '上车：5、4、3、2、1，开拍！' + (d.limit ? d.limit + '，' : '') + '拍完这一轮就下架。'; }
+  ]},
+  { k:'售后', v:[
+    function(d){ return '买回去不放心的也别担心：' + d.after + '。'; },
+    function(d){ return '有家人问售后，统一回复一下：' + d.after + '，有问题直接找店铺客服。'; },
+    function(d){ return '下单之后的事交给我们：' + d.after + '。'; }
+  ]}
+];
+function scriptData(){
+  var s = state.script, p = state.price, r = calcPrice(p);
+  var pts = [s.s1, s.s2, s.s3].map(function(x){ return (x || '').trim(); }).filter(Boolean);
+  var chain = '';
+  if (r.d1 > 0) chain += plain(r.p0) + '先减' + plain(r.d1) + '，是' + plain(r.a) + '；';
+  if (r.fullOk) chain += '满' + plain(r.th) + '再减' + plain(r.tv) + '，是' + plain(r.b) + '；';
+  if (r.sub > 0) chain += '国补再减' + plain(r.sub) + '，';
+  if (!chain) chain = '日常价' + plain(r.p0) + '，今天';
+  var link = (s.link || '').trim();
+  return {
+    name:(s.name || '').trim() || '这款产品',
+    scene:(s.scene || '').trim() || '家里',
+    pain:(s.pain || '').trim() || '（先在左边填用户头疼的事）',
+    pts:pts, cnt:['', '一', '两', '三'][pts.length],
+    P0:plain(r.p0), F:plain(r.fin), S:plain(r.save), Z:String(r.zhe),
+    steps:priceSteps(r), chain:'我直接给大家算：' + chain,
+    gift:giftSentence(p),
+    limit:(s.limit || '').trim(),
+    link: link ? '下方小黄车 ' + link + ' 号链接' : '下方小黄车',
+    after:(s.after || '').trim() || '官方售后'
+  };
+}
+var scriptText = '';
+function renderScript(focusIdx){
+  var s = state.script, d = scriptData();
+  var out = $('#sOut'); out.textContent = '';
+  var parts = [], plainTexts = [];
+  T.forEach(function(sec, i){
+    var vi = (s.v[i] || 0) % sec.v.length;
+    var txt = sec.v[vi](d);
+    parts.push('【' + sec.k + '】\n' + txt);
+    plainTexts.push(txt);
+    var art = el('article', 'ssec');
+    var hd = el('div', 'shead');
+    var h = el('h3'); h.textContent = sec.k;
+    var b = el('button', 'btn ghost sm'); b.type = 'button';
+    b.textContent = '换一句 ' + (vi + 1) + '/' + sec.v.length;
+    b.addEventListener('click', function(){
+      s.v[i] = (vi + 1) % sec.v.length; save(); renderScript(i);
+    });
+    hd.appendChild(h); hd.appendChild(b);
+    var para = el('p'); para.textContent = txt;
+    art.appendChild(hd); art.appendChild(para);
+    out.appendChild(art);
+  });
+  scriptText = parts.join('\n\n');
+  if (typeof focusIdx === 'number') out.children[focusIdx].querySelector('button').focus();
+
+  var hits = scan(plainTexts.join('\n'));
+  var chk = $('#sCheck'); chk.textContent = '';
+  if (!hits.length) {
+    var ok = el('span', 'chip ok'); ok.textContent = '自检：没发现风险词'; chk.appendChild(ok);
+  } else {
+    var seen = [];
+    hits.forEach(function(h){ if (seen.indexOf(h.it.w) < 0) seen.push(h.it.w); });
+    var bad = hits.some(function(h){ return h.it.s === 'bad'; });
+    var c = el('span', 'chip ' + (bad ? 'bad' : 'warn'));
+    c.textContent = '自检：' + seen.slice(0, 3).join('、') + (seen.length > 3 ? ' 等' : '') + ' 可能有风险';
+    var go = el('button', 'btn ghost sm'); go.type = 'button'; go.textContent = '逐句检查';
+    go.addEventListener('click', function(){
+      state.words.text = plainTexts.join('\n'); save();
+      $('#w-text').value = state.words.text;
+      renderWords(); activate('words');
+    });
+    chk.appendChild(c); chk.appendChild(go);
+  }
+}
+$('#sCopy').addEventListener('click', function(){ copy(scriptText); });
+
+/* ---------- timer ---------- */
+function freshRuntime(){ return { idx:0, itemAcc:0, totalAcc:0, since:null, waterMark:0, endBeeped:false, done:false, lock:null }; }
+var rt = freshRuntime();
+var audio = null;
+
+function items(){ return state.timer.items; }
+function elapsed(){
+  var d = rt.since ? Date.now() - rt.since : 0;
+  return { item:rt.itemAcc + d, total:rt.totalAcc + d };
+}
+function commit(){
+  if (!rt.since) return;
+  var now = Date.now(), d = now - rt.since;
+  rt.itemAcc += d; rt.totalAcc += d; rt.since = now;
+}
+function clockText(ms, up){
+  var s = up ? Math.ceil(ms / 1000) : Math.floor(ms / 1000);
+  var h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+  var mm = String(m).padStart(2, '0'), ss = String(sec).padStart(2, '0');
+  return h ? h + ':' + mm + ':' + ss : mm + ':' + ss;
+}
+function beep(times){
+  if (!audio || !state.timer.sound) return;
+  try {
+    for (var i = 0; i < times; i++) {
+      var o = audio.createOscillator(), g = audio.createGain();
+      var t = audio.currentTime + i * 0.28;
+      o.frequency.value = 880;
+      o.connect(g); g.connect(audio.destination);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+      o.start(t); o.stop(t + 0.22);
+    }
+  } catch (e) {}
+}
+function requestLock(){
+  try {
+    if ('wakeLock' in navigator && (!rt.lock || rt.lock.released)) {
+      navigator.wakeLock.request('screen').then(function(l){ rt.lock = l; }, function(){});
+    }
+  } catch (e) {}
+}
+function releaseLock(){
+  try { if (rt.lock) rt.lock.release(); } catch (e) {}
+  rt.lock = null;
+}
+document.addEventListener('visibilitychange', function(){
+  if (document.visibilityState === 'visible' && rt.since) requestLock();
+});
+
+function start(){
+  if (rt.done) return;
+  try {
+    if (!audio) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) audio = new AC(); }
+    if (audio && audio.state === 'suspended') audio.resume();
+  } catch (e) {}
+  rt.since = Date.now();
+  requestLock();
+  renderStage();
+}
+function pause(){ commit(); rt.since = null; releaseLock(); renderStage(); }
+function toggle(){ if (rt.since) pause(); else start(); }
+function goTo(i){
+  commit();
+  rt.idx = Math.max(0, Math.min(i, items().length - 1));
+  rt.itemAcc = 0; rt.endBeeped = false; rt.done = false;
+  renderStage();
+}
+function next(){
+  commit();
+  if (rt.idx >= items().length - 1) {
+    rt.done = true; rt.since = null; releaseLock();
+    renderStage();
+  } else {
+    goTo(rt.idx + 1);
+  }
+}
+function prev(){ goTo(rt.done ? rt.idx : rt.idx - 1); }
+
+function renderStage(){
+  var list = items();
+  if (rt.idx >= list.length) rt.idx = list.length - 1;
+  var it = list[rt.idx], e = elapsed();
+  var plan = num(it.min) * 60000, left = plan - e.item;
+  var stage = $('#stage');
+  var planTotal = list.reduce(function(a, x){ return a + num(x.min); }, 0);
+
+  stage.classList.toggle('live', !!rt.since);
+  stage.classList.toggle('over', !rt.done && left < 0);
+  stage.classList.toggle('soon', !rt.done && left >= 0 && left <= 60000 && e.item > 0);
+
+  $('#stState').textContent = rt.done ? '已下播' : rt.since ? '计时中' : e.total > 0 ? '已暂停' : '未开始';
+  $('#stTotal').textContent = '已播 ' + clockText(e.total) + ' / 计划 ' + plain(planTotal) + ' 分钟';
+
+  if (rt.done) {
+    $('#stName').textContent = '排品全部讲完了';
+    $('#stIdx').textContent = '辛苦了，记得去「下播复盘」';
+    $('#stClock').textContent = clockText(e.total);
+    $('#stBar').style.width = '100%';
+    $('#stNote').textContent = '';
+    $('#stNext').textContent = '';
+  } else {
+    $('#stName').textContent = (it.name || '').trim() || '环节 ' + (rt.idx + 1);
+    $('#stIdx').textContent = '第 ' + (rt.idx + 1) + ' / ' + list.length + ' 个环节 · 计划 ' + plain(num(it.min)) + ' 分钟';
+    $('#stClock').textContent = left >= 0 ? clockText(left, true) : '+' + clockText(-left);
+    $('#stBar').style.width = (plan > 0 ? Math.min(e.item / plan, 1) * 100 : 0) + '%';
+    $('#stNote').textContent = (it.note || '').trim() ? '提醒：' + it.note.trim() : '';
+    var nx = list[rt.idx + 1];
+    $('#stNext').textContent = nx ? '下一个：' + ((nx.name || '').trim() || '环节 ' + (rt.idx + 2)) + '（' + plain(num(nx.min)) + ' 分钟）' : '这是最后一个环节';
+  }
+
+  var go = $('#tGo');
+  go.textContent = rt.since ? '暂停' : e.total > 0 && !rt.done ? '继续' : '开始计时';
+  go.disabled = rt.done;
+  $('#tPrev').disabled = !rt.done && rt.idx === 0;
+  $('#tNext').disabled = rt.done;
+
+  $$('.trow', $('#tRows')).forEach(function(row, i){
+    row.classList.toggle('cur', i === rt.idx && !rt.done);
+    row.classList.toggle('done', i < rt.idx || rt.done);
+  });
+}
+function tick(){
+  if (!rt.since) return;
+  var it = items()[rt.idx], e = elapsed();
+  var plan = num(it.min) * 60000;
+  if (!rt.endBeeped && plan > 0 && e.item >= plan) { rt.endBeeped = true; beep(2); }
+  var water = num(state.timer.water) * 60000;
+  if (water > 0 && e.total - rt.waterMark >= water) {
+    rt.waterMark = e.total;
+    $('#waterText').textContent = '已经播了 ' + Math.round(e.total / 60000) + ' 分钟，喝口水润润嗓子';
+    $('#water').hidden = false;
+    beep(1);
+  }
+  renderStage();
+}
+setInterval(tick, 250);
+
+function renderEditor(){
+  var box = $('#tRows'); box.textContent = '';
+  var list = items();
+  list.forEach(function(it, i){
+    var row = el('div', 'trow');
+    var n = el('button', 'tnum'); n.type = 'button'; n.textContent = i + 1;
+    n.title = '从这个环节开始'; n.setAttribute('aria-label', '跳到第 ' + (i + 1) + ' 个环节');
+    n.addEventListener('click', function(){ goTo(i); });
+
+    var name = el('input', 'tname'); name.type = 'text'; name.id = 't-name-' + i; name.value = it.name || '';
+    name.setAttribute('aria-label', '第 ' + (i + 1) + ' 个环节名称');
+    name.addEventListener('input', function(){ it.name = name.value; save(); renderStage(); });
+
+    var min = el('input', 'tmin num'); min.type = 'text'; min.id = 't-min-' + i; min.value = it.min || '';
+    min.inputMode = 'decimal'; min.setAttribute('aria-label', '第 ' + (i + 1) + ' 个环节分钟数');
+    min.addEventListener('input', function(){ it.min = min.value; save(); renderStage(); updateTotal(); });
+
+    var note = el('input', 'tnote'); note.type = 'text'; note.id = 't-note-' + i; note.value = it.note || '';
+    note.placeholder = '提醒：链接号、要演示的点';
+    note.setAttribute('aria-label', '第 ' + (i + 1) + ' 个环节提醒');
+    note.addEventListener('input', function(){ it.note = note.value; save(); renderStage(); });
+
+    var del = el('button', 'tdel'); del.type = 'button'; del.textContent = '删除';
+    del.setAttribute('aria-label', '删除第 ' + (i + 1) + ' 个环节');
+    del.addEventListener('click', function(){
+      list.splice(i, 1);
+      if (!list.length) list.push({ name:'新环节', min:'5', note:'' });
+      if (rt.idx > i || rt.idx >= list.length) rt.idx = Math.max(0, rt.idx - 1);
+      save(); renderEditor(); renderStage();
+    });
+
+    row.appendChild(n); row.appendChild(name); row.appendChild(min); row.appendChild(note); row.appendChild(del);
+    box.appendChild(row);
+  });
+  updateTotal();
+}
+function updateTotal(){
+  var list = items();
+  var sum = list.reduce(function(a, x){ return a + num(x.min); }, 0);
+  $('#tTotal').textContent = '共 ' + list.length + ' 个环节，' + plain(sum) + ' 分钟';
+}
+$('#tAdd').addEventListener('click', function(){
+  items().push({ name:'新环节', min:'5', note:'' });
+  save(); renderEditor(); renderStage();
+  var rows = $$('.trow', $('#tRows'));
+  rows[rows.length - 1].querySelector('.tname').focus();
+});
+$('#tGo').addEventListener('click', toggle);
+$('#tNext').addEventListener('click', next);
+$('#tPrev').addEventListener('click', prev);
+$('#waterOk').addEventListener('click', function(){ $('#water').hidden = true; });
+
+var resetArm = null;
+$('#tReset').addEventListener('click', function(){
+  var b = this;
+  if (!resetArm) {
+    b.textContent = '再点一次确认';
+    resetArm = setTimeout(function(){ resetArm = null; b.textContent = '清零'; }, 3000);
+    return;
+  }
+  clearTimeout(resetArm); resetArm = null; b.textContent = '清零';
+  releaseLock(); rt = freshRuntime();
+  $('#water').hidden = true;
+  renderStage();
+});
+document.addEventListener('keydown', function(e){
+  if (state.tab !== 'timer') return;
+  var t = e.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'BUTTON')) return;
+  if (e.key === ' ') { e.preventDefault(); toggle(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+});
+
+/* ---------- review ---------- */
+function durationText(m){
+  m = Math.round(m);
+  var h = Math.floor(m / 60), r = m % 60;
+  if (!h) return r + '分钟';
+  return h + '小时' + (r ? r + '分钟' : '');
+}
+function renderReview(){
+  var R = state.review;
+  var mins = num(R.mins), uv = num(R.uv), pv = num(R.pv), buyers = num(R.buyers), orders = num(R.orders);
+  var gmv = num(R.gmv), refund = num(R.refund), spend = num(R.spend), stay = num(R.stay), fans = num(R.fans);
+  var net = gmv - refund;
+  var roi = spend > 0 ? gmv / spend : null;
+  var netRoi = spend > 0 ? net / spend : null;
+  var cvr = uv > 0 ? buyers / uv : 0;
+  var uvv = uv > 0 ? gmv / uv : 0;
+  var gpm = pv > 0 ? gmv / pv * 1000 : 0;
+  var aov = orders > 0 ? gmv / orders : 0;
+  var rr = gmv > 0 ? refund / gmv : 0;
+  var fr = uv > 0 ? fans / uv : 0;
+
+  var tiles = [
+    { k:'成交转化率', v:pct(cvr), f:'成交人数 ÷ 观看人数' },
+    { k:'UV 价值', v:money(uvv) + ' 元', f:'成交金额 ÷ 观看人数' },
+    { k:'千次观看成交 GPM', v:money(Math.round(gpm)) + ' 元', f:'成交金额 ÷ 观看次数 × 1000' },
+    { k:'客单价', v:money(aov) + ' 元', f:'成交金额 ÷ 订单数' },
+    { k:'投放 ROI', v:roi == null ? '—' : roi.toFixed(2), f:netRoi == null ? '没有投流' : '扣退款后 ' + netRoi.toFixed(2), bad:roi != null && roi < 1 },
+    { k:'退款率', v:pct(rr), f:'退款金额 ÷ 成交金额' },
+    { k:'净成交额', v:wan(net) + ' 元', f:'成交金额 − 退款金额' },
+    { k:'涨粉率', v:pct(fr), f:'新增粉丝 ÷ 观看人数' }
+  ];
+  var box = $('#rTiles'); box.textContent = '';
+  tiles.forEach(function(t){
+    var d = el('div', 'tile' + (t.bad ? ' bad' : ''));
+    var k = el('div', 'k'); var ks = el('span'); ks.textContent = t.k; k.appendChild(ks);
+    if (t.bad) { var c = el('span', 'chip bad'); c.textContent = '投流亏钱'; k.appendChild(c); }
+    var v = el('div', 'v'); v.textContent = t.v;
+    var f = el('div', 'f'); f.textContent = t.f;
+    d.appendChild(k); d.appendChild(v); d.appendChild(f);
+    box.appendChild(d);
+  });
+
+  var lines = [
+    '【直播复盘】',
+    '时长 ' + durationText(mins) + '｜观看 ' + wan(uv) + ' 人（' + wan(pv) + ' 次）｜人均停留 ' + plain(stay) + ' 秒',
+    '成交 ' + wan(buyers) + ' 人 / ' + wan(orders) + ' 单，成交额 ' + wan(gmv) + (mins > 0 ? '（每小时 ' + wan(gmv / mins * 60) + '）' : ''),
+    '退款 ' + wan(refund) + '，退款率 ' + pct(rr) + '，净成交 ' + wan(net),
+    '转化率 ' + pct(cvr) + '｜UV 价值 ' + money(uvv) + ' 元｜GPM ' + money(Math.round(gpm)) + '｜客单价 ' + money(Math.round(aov)) + ' 元',
+    spend > 0 ? '投流 ' + wan(spend) + '，ROI ' + roi.toFixed(2) + '（扣退款后 ' + netRoi.toFixed(2) + '）' : '这场没有投流',
+    '新增粉丝 ' + wan(fans) + '，涨粉率 ' + pct(fr)
+  ];
+  if ((R.good || '').trim()) lines.push('做得好的：' + R.good.trim());
+  if ((R.fix || '').trim()) lines.push('下场要改的：' + R.fix.trim());
+  $('#rSum').textContent = lines.join('\n');
+}
+$('#rCopy').addEventListener('click', function(){ copy($('#rSum').textContent); });
+
+/* ---------- binding ---------- */
+var RENDER = {
+  price:function(){ renderPrice(); renderScript(); },
+  script:function(){ renderScript(); },
+  words:function(){ renderWords(); },
+  timer:function(){ renderStage(); },
+  review:function(){ renderReview(); }
+};
+function syncInputs(){
+  $$('[data-bind]').forEach(function(elm){
+    var parts = elm.dataset.bind.split('.'), v = state[parts[0]][parts[1]];
+    if (elm.type === 'checkbox') elm.checked = !!v; else elm.value = v == null ? '' : v;
+  });
+}
+$$('[data-bind]').forEach(function(elm){
+  var parts = elm.dataset.bind.split('.');
+  var isBox = elm.type === 'checkbox';
+  elm.addEventListener(isBox ? 'change' : 'input', function(){
+    state[parts[0]][parts[1]] = isBox ? elm.checked : elm.value;
+    save(); RENDER[parts[0]]();
+  });
+});
+function renderAll(){ renderPrice(); renderScript(); renderWords(); renderEditor(); renderStage(); renderReview(); }
+
+var allArm = null;
+$('#resetAll').addEventListener('click', function(){
+  var b = this;
+  if (!allArm) {
+    b.textContent = '再点一次，确认清空并恢复示例';
+    allArm = setTimeout(function(){ allArm = null; b.textContent = '恢复示例数据'; }, 4000);
+    return;
+  }
+  clearTimeout(allArm); allArm = null; b.textContent = '恢复示例数据';
+  var tab = state.tab;
+  state = clone(DEFAULTS); state.tab = tab;
+  releaseLock(); rt = freshRuntime(); $('#water').hidden = true;
+  save(); syncInputs(); renderAll();
+  toast('已恢复示例数据');
+});
+
+/* ---------- boot ---------- */
+syncInputs();
+renderAll();
+var hash = (location.hash || '').slice(1);
+activate(TABS.indexOf(hash) >= 0 ? hash : state.tab);
+})();
+</script>
